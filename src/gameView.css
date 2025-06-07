@@ -1,0 +1,35 @@
+.PlayerOneBox {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.PlayerTwoBox {
+    position: absolute;
+    bottom: 220px;
+    left: 1180px;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.PlayerThreeBox {
+    position: absolute;
+    bottom: 530px;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.PlayerFourBox {
+    position: absolute;
+    bottom: 220px;
+    left: 290px;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+}

@@ -1,12 +1,28 @@
 import React, { FC, useState } from 'react';
-import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia } from '@mui/material';
-
+import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection } from '@mui/material';
+import './gameView.css';
 
 
 function Game_view() {
     return (
         <Box>
-            <PlayerHand />
+            <Box className="PlayerOneBox">
+                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row'
+                />
+            </Box>
+            <Box className="PlayerTwoBox">
+                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column'
+                />
+            </Box>
+            <Box className="PlayerThreeBox">
+                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row'
+                />
+            </Box>
+            <Box className="PlayerFourBox">
+                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column'
+                />
+            </Box>
+
             <Game_Table />
         </Box>
     );
@@ -31,39 +47,39 @@ function Game_Table() {
     );
 }
 
-function PlayerHand() {
+interface PlayerHandProps {
+    width: number;
+    height: number;
+    spacing: number;
+    columns: number;
+    direction: GridDirection;
+}
+
+
+function PlayerHand({ width, height, spacing, columns, direction }: Readonly<PlayerHandProps>) {
     return (
-        <Box
-            sx={{
-                position: 'absolute',
-                bottom: 40,       // distance from bottom of screen
-                left: 0,
-                width: '100%',    // span full width so centering works
-                pointerEvents: 'none', // allow clicks through empty areas
-                zIndex: 1
-            }}
+        <Grid2
+            container
+            direction={direction}
+            columns={columns}
+            spacing={spacing}
+            justifyContent="center"   // center the items within available width
+            sx={{ pointerEvents: 'auto' }} // let only cards be clickable
         >
-            <Grid2
-                container
-                columns={12}
-                spacing={1}
-                justifyContent="center"   // center the items within available width
-                sx={{ pointerEvents: 'auto' }} // let only cards be clickable
-            >
-                {[0, 1, 2, 3].map((idx) => (
-                    <Grid2 size={1
-                    } key={idx}>
-                        <HadHatoolCard
-                            width={100}
-                            height={140} />
-                    </Grid2>
-                ))}
-            </Grid2>
-        </Box>
+            {[0, 1, 2, 3].map((idx) => (
+                <Grid2 size={1
+                } key={idx}>
+                    <HadHatoolCard
+                        width={width}
+                        height={height} />
+                </Grid2>
+            ))}
+        </Grid2>
     );
 
 
 }
+
 
 
 interface HadHatoolCardProps {
