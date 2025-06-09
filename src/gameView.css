@@ -33,3 +33,22 @@
     pointer-events: none;
     z-index: 1;
 }
+
+.CardsDeck {
+    position: absolute;
+    bottom: 270px;
+    left: 790px;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.UsedPile {
+    position: absolute;
+    bottom: 270px;
+    left: 620px;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+
+}

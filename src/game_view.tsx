@@ -5,7 +5,7 @@ import './gameView.css';
 
 function Game_view() {
     return (
-        <Box>
+        <Box>  \\ The 4 cards placements
             <Box className="PlayerOneBox">
                 <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row'
                 />
@@ -22,7 +22,14 @@ function Game_view() {
                 <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column'
                 />
             </Box>
+            <Box className="CardsDeck">
+                <CardsDeck />
 
+            </Box>
+            <Box className="UsedPile">
+                <UsedPile />
+
+            </Box>
             <Game_Table />
         </Box>
     );
@@ -71,37 +78,58 @@ function PlayerHand({ width, height, spacing, columns, direction }: Readonly<Pla
                 } key={idx}>
                     <HadHatoolCard
                         width={width}
-                        height={height} />
+                        height={height}
+                        isshowed={false}
+                        content='none' />
                 </Grid2>
             ))}
         </Grid2>
     );
-
-
 }
+
+
+function CardsDeck() {
+    return (
+        <HadHatoolCard
+            width={100}
+            height={140}
+            isshowed={false}
+            content='none' />
+    );
+}
+
+function UsedPile() {
+    return (
+        <HadHatoolCard
+            width={100}
+            height={140}
+            isshowed={true}
+            content='5' />
+    );
+}
+
+
 
 
 
 interface HadHatoolCardProps {
     width: number;
     height: number;
+    isshowed: boolean;
+    content: string;
 }
 
 
-function HadHatoolCard({ width, height }: Readonly<HadHatoolCardProps>) {
+function HadHatoolCard({ width, height, isshowed, content }: Readonly<HadHatoolCardProps>) {
     return (
         <Card sx={{
             width: width,
             height: height
         }}>
             <CardContent>
-                {/* <CardMedia>
-        component="img"
-        height="194"
-        image="/static/images/cards/paella.jpg"
-        alt="Paella dish"
-        </CardMedia> */}
-
+                <Typography variant="h4" component="div" textAlign={"center"}>
+                    {isshowed ? content : null}
+                </Typography>
             </CardContent>
         </Card>
     );
