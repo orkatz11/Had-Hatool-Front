@@ -1,9 +1,14 @@
 import React, { FC, useState } from 'react';
 import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection } from '@mui/material';
-import './gameView.css';
+import './game_view.css';
+import './backend_mockup';
+import './game_actions';
+import { GameActions, initializeGame } from './game_actions';
 
 
 function Game_view() {
+    const thisGame = initializeGame();
+
     return (
         <Box>  \\ The 4 cards placements
             <Box className="PlayerOneBox">
