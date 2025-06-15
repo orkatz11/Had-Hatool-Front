@@ -10,7 +10,7 @@ function Game_view() {
     const thisGame = initializeGame();
 
     return (
-        <Box>  \\ The 4 cards placements
+        <Box>  {/* The 4 cards placements*/}
             <Box className="PlayerOneBox">
                 <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row'
                 />

@@ -42,8 +42,8 @@ class HadHatoolActionsFunctions implements GameActionsFunctions {
 
 
 
-function availbleAction(actionChosen: GameActions, ownCard?: number, playerNumber?: number, playerCard?: number) {
-    send request availbleAction(actionChosen: string, ownCard ?: number, playerNumber ?: number, playerCard ?: number)
-    if response.actionChosen == 'action name':
-        doActionFunc(card, ...)
-}
+// function availbleAction(actionChosen: GameActions, ownCard?: number, playerNumber?: number, playerCard?: number) {
+//     send request availbleAction(actionChosen: string, ownCard ?: number, playerNumber ?: number, playerCard ?: number)
+//     if response.actionChosen == 'action name':
+//         doActionFunc(card, ...)
+// }
