@@ -4,7 +4,7 @@ export function createNewGame() { //return ID of the new game, and the only card
 
 export function getPlayersCards(player: number, cards: number[]) {
     if (cards.length == 4) {
-        return (['1', '2', '3', '4', '5'])
+        return (['1', '2', '3', '4'])
     }
     if (cards.length == 2) {
         return (['6', '7'])

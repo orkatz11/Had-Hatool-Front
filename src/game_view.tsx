@@ -8,8 +8,7 @@ import { GameActions, initializeGame } from './game_actions';
 
 function Game_view() {
     const thisGame = initializeGame();
-
-
+    thisGame.availbleAction(GameActions.FirstLook, 1);
 
     return (
         <Box>  {/* The 4 cards placements*/}
