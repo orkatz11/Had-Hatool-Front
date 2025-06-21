@@ -1,25 +1,31 @@
 import React, { FC, useState } from 'react';
 import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection } from '@mui/material';
-import './gameView.css';
+import './game_view.css';
+import './backend_mockup';
+
+import { GameActions, initializeGame } from './game_actions';
 
 
 function Game_view() {
+    const thisGame = initializeGame();
+    thisGame.availbleAction(GameActions.FirstLook, 1);
+
     return (
-        <Box>  \\ The 4 cards placements
+        <Box>  {/* The 4 cards placements*/}
             <Box className="PlayerOneBox">
-                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row'
+                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={0}
                 />
             </Box>
             <Box className="PlayerTwoBox">
-                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column'
+                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
                 />
             </Box>
             <Box className="PlayerThreeBox">
-                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row'
+                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={0}
                 />
             </Box>
             <Box className="PlayerFourBox">
-                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column'
+                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
                 />
             </Box>
             <Box className="CardsDeck">
@@ -60,11 +66,25 @@ interface PlayerHandProps {
     spacing: number;
     columns: number;
     direction: GridDirection;
+    cardsShowed: number; // 0-3 ->  specific card, 4 -> hidden, 5 -> 2 end cards
+    cardValues?: string[];
+
 }
 
 
-function PlayerHand({ width, height, spacing, columns, direction }: Readonly<PlayerHandProps>) {
+function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues = ['none', 'none', 'none', 'none'] }: Readonly<PlayerHandProps>) {
+    let cardShown = 0;
+    let firstLook = false;
+    if (cardsShowed == 0 || cardsShowed == 1 || cardsShowed == 2 || cardsShowed == 3) {
+        cardShown = cardsShowed;
+    }
+    else if (cardsShowed == 4) {
+        firstLook = true;
+    }
+
+
     return (
+
         <Grid2
             container
             direction={direction}
@@ -79,8 +99,8 @@ function PlayerHand({ width, height, spacing, columns, direction }: Readonly<Pla
                     <HadHatoolCard
                         width={width}
                         height={height}
-                        isshowed={false}
-                        content='none' />
+                        isshowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
+                        content={cardValues[idx]} />
                 </Grid2>
             ))}
         </Grid2>
