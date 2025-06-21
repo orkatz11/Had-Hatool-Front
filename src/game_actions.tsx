@@ -30,7 +30,7 @@ class HadHatoolActionsFunctions implements GameActionsFunctions {
     }
 
     availbleAction(actionChosen: GameActions, ownCard?: number, playerNumber?: number, playerCard?: number): [string[], number[]] {
-        return [['null'], [3]];
+        return [['null'], [3]]; //supposed to go through backend_mockup
     }
 
     getPlayersCards(player: number, cards: number[]) {

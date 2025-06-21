@@ -67,12 +67,13 @@ interface PlayerHandProps {
     spacing: number;
     columns: number;
     direction: GridDirection;
-    cardsShowed: number // 0-3 ->  specific card, 4 -> hidden, 5 -> 2 end cards
+    cardsShowed: number; // 0-3 ->  specific card, 4 -> hidden, 5 -> 2 end cards
+    cardValues?: string[];
 
 }
 
 
-function PlayerHand({ width, height, spacing, columns, direction, cardsShowed }: Readonly<PlayerHandProps>) {
+function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues = ['none', 'none', 'none', 'none'] }: Readonly<PlayerHandProps>) {
     let cardShown = 0;
     let firstLook = false;
     if (cardsShowed == 0 || cardsShowed == 1 || cardsShowed == 2 || cardsShowed == 3) {
@@ -81,6 +82,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed }:
     else if (cardsShowed == 4) {
         firstLook = true;
     }
+
 
     return (
 
@@ -99,7 +101,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed }:
                         width={width}
                         height={height}
                         isshowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
-                        content='none' />
+                        content={cardValues[idx]} />
                 </Grid2>
             ))}
         </Grid2>
