@@ -16,18 +16,18 @@ function Game_view() {
                 <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={0}
                 />
             </Box>
-            <Box className="PlayerTwoBox">
+            {/* <Box className="PlayerTwoBox">
                 <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
                 />
-            </Box>
+            </Box> */}
             <Box className="PlayerThreeBox">
                 <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={0}
                 />
             </Box>
-            <Box className="PlayerFourBox">
+            {/* <Box className="PlayerFourBox">
                 <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
                 />
-            </Box>
+            </Box> */}
             <Box className="CardsDeck">
                 <CardsDeck />
 
