@@ -3,12 +3,11 @@ import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActio
 import './game_view.css';
 import './backend_mockup';
 
-import { GameActions, initializeGame } from './game_actions';
+import { GameActions } from './game_actions';
 
 
-function Game_view() {
-    const thisGame = initializeGame();
-    thisGame.availbleAction(GameActions.FirstLook, 1);
+function GameView() {
+
 
     return (
         <Box>  {/* The 4 cards placements*/}
@@ -16,18 +15,10 @@ function Game_view() {
                 <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={0}
                 />
             </Box>
-            {/* <Box className="PlayerTwoBox">
-                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
-                />
-            </Box> */}
-            <Box className="PlayerThreeBox">
+            <Box className="PlayerTwoBox">
                 <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={0}
                 />
             </Box>
-            {/* <Box className="PlayerFourBox">
-                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
-                />
-            </Box> */}
             <Box className="CardsDeck">
                 <CardsDeck />
 
@@ -36,12 +27,12 @@ function Game_view() {
                 <UsedPile />
 
             </Box>
-            <Game_Table />
+            <GameTable />
         </Box>
     );
 }
 
-function Game_Table() {
+function GameTable() {
     return (
         <Box
             sx={{
@@ -155,4 +146,4 @@ function HadHatoolCard({ width, height, isshowed, content }: Readonly<HadHatoolC
     );
 }
 
-export default Game_view;
+export default GameView;

@@ -7,16 +7,16 @@
     z-index: 1;
 }
 
-.PlayerTwoBox {
+/* .PlayerTwoBox {
     position: absolute;
     bottom: 220px;
     left: 1180px;
     width: 100%;
     pointer-events: none;
     z-index: 1;
-}
+} */
 
-.PlayerThreeBox {
+.PlayerTwoBox {
     position: absolute;
     bottom: 530px;
     left: 0;
@@ -25,14 +25,14 @@
     z-index: 1;
 }
 
-.PlayerFourBox {
+/* .PlayerFourBox {
     position: absolute;
     bottom: 220px;
     left: 290px;
     width: 100%;
     pointer-events: none;
     z-index: 1;
-}
+} */
 
 .CardsDeck {
     position: absolute;
