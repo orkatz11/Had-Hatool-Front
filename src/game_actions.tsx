@@ -10,15 +10,17 @@ export enum GameActions {
 class ExecutActionOut {
 
     cardsRecived: Map<[string, number[]], string[]>;
+    nextTurn: number;
 
     constructor() {
         this.cardsRecived = new Map();
+        this.nextTurn = 2;
     }
 }
 
 class GameAction {
 
-    executeAction<ExecutActionIn>(arg: ExecutActionIn): ExecutActionOut {
+    executeAction<ExecutActionIn>(input: ExecutActionIn): ExecutActionOut {
         const cardReturned = new ExecutActionOut();
         return cardReturned;
     }

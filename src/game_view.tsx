@@ -5,18 +5,32 @@ import './backend_mockup';
 
 import { GameActions } from './game_actions';
 
+enum CardShowedOptions {
+    FirstCard = 0,
+    SecondCard = 1,
+    ThirdCard = 2,
+    ForthCard = 3,
+    FirstLook = 4,
+    AllCards = 5,
+    NoCards = 6,
+}
+
 
 function GameView() {
+    const [cardsShowed, setCardsShowed] = useState(CardShowedOptions.NoCards);
 
+    function handleFirstLookClick() {
+        setCardsShowed(CardShowedOptions.FirstLook)
+    }
 
     return (
         <Box>  {/* The 4 cards placements*/}
             <Box className="PlayerOneBox">
-                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={0}
+                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={CardShowedOptions.NoCards}
                 />
             </Box>
             <Box className="PlayerTwoBox">
-                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={0}
+                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={cardsShowed}
                 />
             </Box>
             <Box className="CardsDeck">
@@ -25,8 +39,10 @@ function GameView() {
             </Box>
             <Box className="UsedPile">
                 <UsedPile />
-
             </Box>
+            <Button onClick={handleFirstLookClick}>
+                First look
+            </Button>
             <GameTable />
         </Box>
     );
@@ -57,22 +73,21 @@ interface PlayerHandProps {
     spacing: number;
     columns: number;
     direction: GridDirection;
-    cardsShowed: number; // 0-3 ->  specific card, 4 -> hidden, 5 -> 2 end cards
+    cardsShowed: CardShowedOptions; // 0-3 ->  specific card, 4 -> hidden, 5 -> first look
     cardValues?: string[];
 
 }
 
 
 function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues = ['none', 'none', 'none', 'none'] }: Readonly<PlayerHandProps>) {
-    let cardShown = 0;
+    let cardShown = CardShowedOptions.NoCards;
     let firstLook = false;
-    if (cardsShowed == 0 || cardsShowed == 1 || cardsShowed == 2 || cardsShowed == 3) {
+    if (cardsShowed == CardShowedOptions.FirstCard || cardsShowed == CardShowedOptions.SecondCard || cardsShowed == CardShowedOptions.ThirdCard || cardsShowed == CardShowedOptions.ForthCard) {
         cardShown = cardsShowed;
     }
-    else if (cardsShowed == 4) {
+    else if (cardsShowed == CardShowedOptions.FirstLook) {
         firstLook = true;
     }
-
 
     return (
 
