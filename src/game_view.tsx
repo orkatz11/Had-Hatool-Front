@@ -3,7 +3,18 @@ import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActio
 import './game_view.css';
 import './backend_mockup';
 
-import { GameActions } from './game_actions';
+import { FirstLookAction, FirstLookIn, GameActions } from './game_actions';
+
+function createCardsArray(location: number[], values: string[]): string[]{
+
+    let res = ['none', 'none', 'none', 'none'];
+    let value_index = 0;
+    for (const index of location) {
+        res[index] = values[value_index];
+        value_index ++;
+    }
+    return res
+}
 
 enum CardShowedOptions {
     FirstCard = 0,
@@ -18,19 +29,42 @@ enum CardShowedOptions {
 
 function GameView() {
     const [cardsShowed, setCardsShowed] = useState(CardShowedOptions.NoCards);
+    const [firstLookDisabled, setFirstLookDisabled] = useState(false);
+    const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
+    let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
+    // let playersCards = new Map<number,string[]>();
+
+    // Start game function
 
     function handleFirstLookClick() {
-        setCardsShowed(CardShowedOptions.FirstLook)
+        let firstLookIn: FirstLookIn = new FirstLookIn;
+        firstLookIn.playerNumber = mainPlayerNumber;
+        firstLookIn.cardsNeeded = {cardsPlayerNumber: mainPlayerNumber, cardsLocation: [0,3]};
+        let firstLookCall = new FirstLookAction;  //creating an object of the action class
+        let firstLookRes = firstLookCall.excecuteAction(firstLookIn);
+        let firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
+        // playersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));// changing the actual cards in the front
+        let newPlayersCards = new Map<number,string[]>();
+        newPlayersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));
+        setPlayersCards(newPlayersCards);
+        setCardsShowed(CardShowedOptions.FirstLook);
+
+        ///FIND OUT WHY THIS IS NOT WORKING/////
+
+        //get cards from backend
+        //wait X time
+        setFirstLookDisabled(true);
+        //reset the 'cardsShowed' state
     }
 
     return (
         <Box>  {/* The 4 cards placements*/}
-            <Box className="PlayerOneBox">
-                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={CardShowedOptions.NoCards}
+            <Box className="MainPlayerBox">
+                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={cardsShowed} cardValues={playersCards.get(mainPlayerNumber)}
                 />
             </Box>
-            <Box className="PlayerTwoBox">
-                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={cardsShowed}
+            <Box className="TopPlayerBox">
+                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={CardShowedOptions.NoCards}
                 />
             </Box>
             <Box className="CardsDeck">
@@ -40,7 +74,7 @@ function GameView() {
             <Box className="UsedPile">
                 <UsedPile />
             </Box>
-            <Button onClick={handleFirstLookClick}>
+            <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
                 First look
             </Button>
             <GameTable />

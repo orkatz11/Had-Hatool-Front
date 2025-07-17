@@ -1,4 +1,4 @@
-.PlayerOneBox {
+.MainPlayerBox {
     position: absolute;
     bottom: 40px;
     left: 0;
@@ -16,7 +16,7 @@
     z-index: 1;
 } */
 
-.PlayerTwoBox {
+.TopPlayerBox {
     position: absolute;
     bottom: 530px;
     left: 0;

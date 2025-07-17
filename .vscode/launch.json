@@ -13,6 +13,20 @@
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "${webRoot}/*"
             }
-        }
+        },
+        {
+            "name": "Debug React in Chrome",
+            "type": "chrome",             // use the PWA-based Chrome debugger
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/src",   // map sourcemaps back to /src
+            "sourceMapPathOverrides": {
+              "webpack:///src/*": "${workspaceFolder}/src/*"
+            },
+            "skipFiles": [
+              "<node_internals>/**",
+              "webpack:///**"
+            ]
+          }
     ]
 }

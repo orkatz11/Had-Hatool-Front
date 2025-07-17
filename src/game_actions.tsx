@@ -6,19 +6,36 @@ export enum GameActions {
     PickCard = 'pickCard',
 }
 
+interface GetCardsExcecuteInput {
+    cardsPlayerNumber: number;
+    cardsLocation: number[];
 
-class ExecutActionOut {
+}
 
-    cardsRecived: Map<[string, number[]], string[]>;
-    nextTurn: number;
+
+class ExecutActionIn {
+
+    cardsNeeded: GetCardsExcecuteInput;  //[which player, which cards] --> 
+    playerNumber: number;
 
     constructor() {
-        this.cardsRecived = new Map();
-        this.nextTurn = 2;
+        this.cardsNeeded = {cardsPlayerNumber: 1, cardsLocation: [9]}
+        this.playerNumber = 1;  
     }
 }
 
-class GameAction {
+class ExecutActionOut {
+
+    cardsRecived: string[];
+    nextTurn: number;
+
+    constructor() {
+        this.cardsRecived = [];
+        this.nextTurn = 0;  //thisplayernumber + 1 modulu 2
+    }
+}
+
+export class GameAction {
 
     executeAction<ExecutActionIn>(input: ExecutActionIn): ExecutActionOut {
         const cardReturned = new ExecutActionOut();
@@ -26,27 +43,30 @@ class GameAction {
     }
 }
 
-class FirstLookIn {
+export class FirstLookIn extends ExecutActionIn{
     playerNumber: number
 
     constructor() {
+        super()
         this.playerNumber = 1;
     }
 }
 
-class FirstLookOut {
-    returnedCards: string[]
-
+export class FirstLookOut extends ExecutActionOut{
+    nextTurn: number;
+    
     constructor() {
-        this.returnedCards = [];
+        super()
+        this.nextTurn = 2;
     }
 }
 
 export class FirstLookAction extends GameAction {
     excecuteAction(firstLookIn: FirstLookIn): FirstLookOut {
         const cards: string[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
-        const res: FirstLookOut = new FirstLookOut
-        res.returnedCards = cards;
+        const res: FirstLookOut = new FirstLookOut;
+        res.cardsRecived = cards;
+
         return res;
     }
 
