@@ -3,45 +3,83 @@ import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActio
 import './game_view.css';
 import './backend_mockup';
 
-import { GameActions, initializeGame } from './game_actions';
+import { FirstLookAction, FirstLookIn, GameActions } from './game_actions';
+
+function createCardsArray(location: number[], values: string[]): string[]{
+
+    let res = ['none', 'none', 'none', 'none'];
+    let value_index = 0;
+    for (const index of location) {
+        res[index] = values[value_index];
+        value_index ++;
+    }
+    return res
+}
+
+enum CardShowedOptions {
+    FirstCard = 0,
+    SecondCard = 1,
+    ThirdCard = 2,
+    ForthCard = 3,
+    FirstLook = 4,
+    AllCards = 5,
+    NoCards = 6,
+}
 
 
-function Game_view() {
-    const thisGame = initializeGame();
-    thisGame.availbleAction(GameActions.FirstLook, 1);
+function GameView() {
+    const [cardsShowed, setCardsShowed] = useState(CardShowedOptions.NoCards);
+    const [firstLookDisabled, setFirstLookDisabled] = useState(false);
+    const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
+    let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
+
+    // Start game function
+
+    function handleFirstLookClick() {
+        let firstLookIn: FirstLookIn = new FirstLookIn;
+        firstLookIn.playerNumber = mainPlayerNumber;
+        firstLookIn.cardsNeeded = {cardsPlayerNumber: mainPlayerNumber, cardsLocation: [0,3]};
+        let firstLookCall = new FirstLookAction;  //creating an object of the action class
+        let firstLookRes = firstLookCall.excecuteAction(firstLookIn);
+        let firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
+        let newPlayersCards = new Map<number,string[]>();
+        newPlayersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));
+        setPlayersCards(newPlayersCards);
+        setCardsShowed(CardShowedOptions.FirstLook);
+
+        setTimeout(() => {
+            setCardsShowed(CardShowedOptions.NoCards);
+          }, 5000);
+        setFirstLookDisabled(true);
+        //reset the 'cardsShowed' state
+    }
 
     return (
         <Box>  {/* The 4 cards placements*/}
-            <Box className="PlayerOneBox">
-                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={0}
+            <Box className="MainPlayerBox">
+                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={cardsShowed} cardValues={playersCards.get(mainPlayerNumber)}
                 />
             </Box>
-            {/* <Box className="PlayerTwoBox">
-                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
-                />
-            </Box> */}
-            <Box className="PlayerThreeBox">
-                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={0}
+            <Box className="TopPlayerBox">
+                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cardsShowed={CardShowedOptions.NoCards}
                 />
             </Box>
-            {/* <Box className="PlayerFourBox">
-                <PlayerHand width={70} height={50} spacing={1} columns={24} direction='column' cardsShowed={0}
-                />
-            </Box> */}
             <Box className="CardsDeck">
                 <CardsDeck />
 
             </Box>
             <Box className="UsedPile">
                 <UsedPile />
-
             </Box>
-            <Game_Table />
+            <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
+                First look
+            </Button>
+            <GameTable />
         </Box>
     );
 }
 
-function Game_Table() {
+function GameTable() {
     return (
         <Box
             sx={{
@@ -66,22 +104,21 @@ interface PlayerHandProps {
     spacing: number;
     columns: number;
     direction: GridDirection;
-    cardsShowed: number; // 0-3 ->  specific card, 4 -> hidden, 5 -> 2 end cards
+    cardsShowed: CardShowedOptions; // 0-3 ->  specific card, 4 -> hidden, 5 -> first look
     cardValues?: string[];
 
 }
 
 
 function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues = ['none', 'none', 'none', 'none'] }: Readonly<PlayerHandProps>) {
-    let cardShown = 0;
+    let cardShown = CardShowedOptions.NoCards;
     let firstLook = false;
-    if (cardsShowed == 0 || cardsShowed == 1 || cardsShowed == 2 || cardsShowed == 3) {
+    if (cardsShowed == CardShowedOptions.FirstCard || cardsShowed == CardShowedOptions.SecondCard || cardsShowed == CardShowedOptions.ThirdCard || cardsShowed == CardShowedOptions.ForthCard) {
         cardShown = cardsShowed;
     }
-    else if (cardsShowed == 4) {
+    else if (cardsShowed == CardShowedOptions.FirstLook) {
         firstLook = true;
     }
-
 
     return (
 
@@ -155,4 +192,4 @@ function HadHatoolCard({ width, height, isshowed, content }: Readonly<HadHatoolC
     );
 }
 
-export default Game_view;
+export default GameView;

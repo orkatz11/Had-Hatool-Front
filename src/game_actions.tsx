@@ -1,4 +1,4 @@
-import './backend_mockup.tsx';
+import { getPlayersCards } from './backend_mockup';
 
 
 export enum GameActions {
@@ -6,62 +6,73 @@ export enum GameActions {
     PickCard = 'pickCard',
 }
 
+interface GetCardsExcecuteInput {
+    cardsPlayerNumber: number;
+    cardsLocation: number[];
 
-class ActionData {
+}
 
-    availbleActions: GameActions[];
-    cardsRecived: Map<[string, number[]], string[]>;
+
+class ExecutActionIn {
+
+    cardsNeeded: GetCardsExcecuteInput;  //[which player, which cards] --> 
+    playerNumber: number;
 
     constructor() {
-        this.availbleActions = [];
-        this.cardsRecived = new Map();
+        this.cardsNeeded = {cardsPlayerNumber: 1, cardsLocation: [9]}
+        this.playerNumber = 1;  
     }
 }
 
-// the interface has only the 'availble action' and 'request update' functions
+class ExecutActionOut {
 
-export function initializeGame(): GameActionsFunctions {
-    return new HadHatoolActionsFunctions();  // should in future return the player number of the player!
-}
-
-
-interface GameActionsFunctions {
-
-    availbleAction(actionChosen: GameActions, playerNumber?: number, ownCard?: number, playerCard?: number): ActionData;
-    // requestUpdate(..) : ..;
-}
-
-
-class HadHatoolActionsFunctions implements GameActionsFunctions {
-    gameID: number;
+    cardsRecived: string[];
+    nextTurn: number;
 
     constructor() {
-        this.gameID = 123 //start a new object in the back
+        this.cardsRecived = [];
+        this.nextTurn = 0;  //thisplayernumber + 1 modulu 2
     }
+}
 
-    availbleAction(actionChosen: GameActions, playerNumber: number, ownCard?: number, playerCard?: number): ActionData {
-        // add check that this action is ok 
-        if (actionChosen == GameActions.FirstLook) {
+export class GameAction {
 
-            return this.getPlayersCards(playerNumber, [0, 3])
-        }
-
-        return new ActionData;
+    executeAction<ExecutActionIn>(input: ExecutActionIn): ExecutActionOut {
+        const cardReturned = new ExecutActionOut();
+        return cardReturned;
     }
+}
 
+export class FirstLookIn extends ExecutActionIn{
+    playerNumber: number
 
-    getPlayersCards(player: number, cards: number[]) {
-        let res = new ActionData;
-        // if ((player == 1) && (cards == [0, 3])) {
-        //     res.cardsRecived.set(['playerCard', [0, 3]], ['0', '4'])
+    constructor() {
+        super()
+        this.playerNumber = 1;
+    }
+}
 
-        // }
+export class FirstLookOut extends ExecutActionOut{
+    nextTurn: number;
+    
+    constructor() {
+        super()
+        this.nextTurn = 2;
+    }
+}
 
-        return res   // supposed to go through backend_mockup
+export class FirstLookAction extends GameAction {
+    excecuteAction(firstLookIn: FirstLookIn): FirstLookOut {
+        const cards: string[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
+        const res: FirstLookOut = new FirstLookOut;
+        res.cardsRecived = cards;
+
+        return res;
     }
 
 }
 
+// (actionChosen: GameActions, playerNumber: number, ownCard?: number, playerCard?: number):  {
 
 
 
