@@ -32,7 +32,6 @@ function GameView() {
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
     const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
     let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
-    // let playersCards = new Map<number,string[]>();
 
     // Start game function
 
@@ -43,16 +42,14 @@ function GameView() {
         let firstLookCall = new FirstLookAction;  //creating an object of the action class
         let firstLookRes = firstLookCall.excecuteAction(firstLookIn);
         let firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
-        // playersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));// changing the actual cards in the front
         let newPlayersCards = new Map<number,string[]>();
         newPlayersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));
         setPlayersCards(newPlayersCards);
         setCardsShowed(CardShowedOptions.FirstLook);
 
-        ///FIND OUT WHY THIS IS NOT WORKING/////
-
-        //get cards from backend
-        //wait X time
+        setTimeout(() => {
+            setCardsShowed(CardShowedOptions.NoCards);
+          }, 5000);
         setFirstLookDisabled(true);
         //reset the 'cardsShowed' state
     }
