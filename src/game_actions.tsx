@@ -1,4 +1,4 @@
-import { getPlayersCards } from './backend_mockup';
+import { getPlayersCards, getPileOrDeckCard } from './backend_mockup';
 
 
 export enum GameActions {
@@ -7,11 +7,10 @@ export enum GameActions {
 }
 
 interface GetCardsExcecuteInput {
-    cardsPlayerNumber: number;
+    cardsSource: number;  // 5 = deck, 6 = pile
     cardsLocation: number[];
 
 }
-
 
 class ExecutActionIn {
 
@@ -19,7 +18,7 @@ class ExecutActionIn {
     playerNumber: number;
 
     constructor() {
-        this.cardsNeeded = {cardsPlayerNumber: 1, cardsLocation: [9]}
+        this.cardsNeeded = {cardsSource: 1, cardsLocation: [9]}
         this.playerNumber = 1;  
     }
 }
@@ -48,16 +47,15 @@ export class FirstLookIn extends ExecutActionIn{
 
     constructor() {
         super()
-        this.playerNumber = 1;
+        this.playerNumber = 0;  // since it is for every player
     }
 }
 
 export class FirstLookOut extends ExecutActionOut{
-    nextTurn: number;
     
     constructor() {
         super()
-        this.nextTurn = 2;
+        this.nextTurn = 1;
     }
 }
 
@@ -66,11 +64,45 @@ export class FirstLookAction extends GameAction {
         const cards: string[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
         const res: FirstLookOut = new FirstLookOut;
         res.cardsRecived = cards;
+        // res.nextTurn = getNextTurn() !!
 
         return res;
     }
 
 }
+
+export class TakeCardIn extends ExecutActionIn {
+    isDeck: boolean;
+
+    constructor() {
+        super()
+        this.playerNumber = 1;
+        this.isDeck = false;
+    }
+}
+
+export class TakeCardOut extends ExecutActionOut {
+
+    constructor() {
+        super()
+        this.nextTurn = 1;
+    }
+
+
+}
+
+export class TakeCardAction extends GameAction {
+    excecuteAction(takeCardIn: TakeCardIn): TakeCardOut {
+        const card: string = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
+        const res: FirstLookOut = new FirstLookOut;
+        res.cardsRecived[0] =  card;
+        // res.nextTurn = getNextTurn() !!
+
+        return res;
+
+    }
+}
+
 
 // (actionChosen: GameActions, playerNumber: number, ownCard?: number, playerCard?: number):  {
 

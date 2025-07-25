@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection } from '@mui/material';
+import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection, CardActionArea } from '@mui/material';
 import './game_view.css';
 import './backend_mockup';
 
-import { FirstLookAction, FirstLookIn, GameActions } from './game_actions';
+import { FirstLookAction, FirstLookIn, GameActions, TakeCardAction, TakeCardIn, TakeCardOut } from './game_actions';
 
 function createCardsArray(location: number[], values: string[]): string[]{
 
@@ -33,12 +33,11 @@ function GameView() {
     const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
     let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
 
-    // Start game function
 
-    function handleFirstLookClick() {
+    function handleFirstLookClick() {   //SHOULD ALSO RETURN THE NEXT TURN
         let firstLookIn: FirstLookIn = new FirstLookIn;
         firstLookIn.playerNumber = mainPlayerNumber;
-        firstLookIn.cardsNeeded = {cardsPlayerNumber: mainPlayerNumber, cardsLocation: [0,3]};
+        firstLookIn.cardsNeeded = {cardsSource: mainPlayerNumber, cardsLocation: [0,3]};
         let firstLookCall = new FirstLookAction;  //creating an object of the action class
         let firstLookRes = firstLookCall.excecuteAction(firstLookIn);
         let firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
@@ -54,6 +53,7 @@ function GameView() {
         //reset the 'cardsShowed' state
     }
 
+
     return (
         <Box>  {/* The 4 cards placements*/}
             <Box className="MainPlayerBox">
@@ -65,11 +65,12 @@ function GameView() {
                 />
             </Box>
             <Box className="CardsDeck">
-                <CardsDeck />
+                <CardsStack mainPlayerNumber={mainPlayerNumber} isDeck={true}/>
 
             </Box>
             <Box className="UsedPile">
-                <UsedPile />
+                <CardsStack mainPlayerNumber={mainPlayerNumber} isDeck={false}/>
+
             </Box>
             <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
                 First look
@@ -119,6 +120,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
     else if (cardsShowed == CardShowedOptions.FirstLook) {
         firstLook = true;
     }
+    function TempOnClick(){};
 
     return (
 
@@ -136,8 +138,10 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
                     <HadHatoolCard
                         width={width}
                         height={height}
-                        isshowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
-                        content={cardValues[idx]} />
+                        isShowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
+                        content={cardValues[idx]} 
+                        onClick={TempOnClick}
+                        />
                 </Grid2>
             ))}
         </Grid2>
@@ -145,49 +149,64 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
 }
 
 
-function CardsDeck() {
+interface CardStackProps {
+    mainPlayerNumber: number;
+    isDeck: boolean;
+
+}
+
+function CardsStack({ mainPlayerNumber, isDeck}: Readonly<CardStackProps>) {
+    const [StackCardContent, setStackcardContent] = useState('none');
+    const [isCardsShowed, setCardsShowed] = useState(false);
+
+    function HandleStackClick() {
+        let takeCardInput: TakeCardIn = new TakeCardIn;
+        takeCardInput.isDeck = isDeck;
+        takeCardInput.playerNumber = mainPlayerNumber;
+        let takeCardAction: TakeCardAction = new TakeCardAction;
+        let cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
+        let cardValue:string = cardOut.cardsRecived[0];
+        setStackcardContent(cardValue);
+        setCardsShowed(true);
+
+    }
+
+    function handleclickdummy() {}
+    
     return (
         <HadHatoolCard
             width={100}
             height={140}
-            isshowed={false}
-            content='none' />
+            isShowed={isCardsShowed}
+            content={StackCardContent}
+            onClick={handleclickdummy}
+            />
     );
 }
-
-function UsedPile() {
-    return (
-        <HadHatoolCard
-            width={100}
-            height={140}
-            isshowed={true}
-            content='5' />
-    );
-}
-
-
-
 
 
 interface HadHatoolCardProps {
     width: number;
     height: number;
-    isshowed: boolean;
+    isShowed: boolean;
     content: string;
+    onClick: () => void; 
 }
 
 
-function HadHatoolCard({ width, height, isshowed, content }: Readonly<HadHatoolCardProps>) {
+function HadHatoolCard({ width, height, isShowed, content, onClick}: Readonly<HadHatoolCardProps>) {
     return (
         <Card sx={{
             width: width,
             height: height
         }}>
-            <CardContent>
-                <Typography variant="h4" component="div" textAlign={"center"}>
-                    {isshowed ? content : null}
-                </Typography>
-            </CardContent>
+            <CardActionArea onClick={onClick}>
+                <CardContent>
+                    <Typography variant="h4" component="div" textAlign={"center"}>
+                        {isShowed ? content : null}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
         </Card>
     );
 }
