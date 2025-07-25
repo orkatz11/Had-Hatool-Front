@@ -32,13 +32,11 @@ function GameView() {
     const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
 
-
     const [deckCardContent, setDeckcardContent] = useState('none');
     const [isDeckCardsShowed, setDeckCardsShowed] = useState(false);
     const [pileCardContent, setPilecardContent] = useState('none');
     const [isPileardsShowed, setPileCardsShowed] = useState(false);
     let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
-
 
 
     function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
@@ -69,16 +67,13 @@ function GameView() {
         let cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
         let cardValue:string = cardOut.cardsRecived[0];
         return(cardValue)
-
     }
 
     function handleDeckClick(): void {
         let cardReturned = handleStackClick(true);
         setDeckcardContent(cardReturned);
         setDeckCardsShowed(true);
-    
     }
-
 
     function handlePileClick(): void {
         let cardReturned = handleStackClick(false);
