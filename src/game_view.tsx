@@ -35,7 +35,6 @@ function GameView() {
     const [deckCardContent, setDeckcardContent] = useState('none');
     const [isDeckCardsShowed, setDeckCardsShowed] = useState(false);
     const [pileCardContent, setPilecardContent] = useState('none');
-    const [isPileardsShowed, setPileCardsShowed] = useState(false);
     let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
 
 
@@ -78,7 +77,6 @@ function GameView() {
     function handlePileClick(): void {
         let cardReturned = handleStackClick(false);
         setPilecardContent(cardReturned);
-        setPileCardsShowed(true);
     }
     
 
@@ -98,7 +96,7 @@ function GameView() {
 
             </Box>
             <Box className="UsedPile">
-                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handlePileClick} StackCardContent={pileCardContent} isCardsShowed={isPileardsShowed}
+                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handlePileClick} StackCardContent={pileCardContent} isCardsShowed={true}
                 />
             </Box>
             <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
