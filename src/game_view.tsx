@@ -28,13 +28,20 @@ enum CardShowedOptions {
 
 
 function GameView() {
-    const [cardsShowed, setCardsShowed] = useState(CardShowedOptions.NoCards);
-    const [firstLookDisabled, setFirstLookDisabled] = useState(false);
+    const [playerCardsShowed, setPlayerCardsShowed] = useState(CardShowedOptions.NoCards);
     const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
+    const [firstLookDisabled, setFirstLookDisabled] = useState(false);
+
+
+    const [deckCardContent, setDeckcardContent] = useState('none');
+    const [isDeckCardsShowed, setDeckCardsShowed] = useState(false);
+    const [pileCardContent, setPilecardContent] = useState('none');
+    const [isPileardsShowed, setPileCardsShowed] = useState(false);
     let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
 
 
-    function handleFirstLookClick() {   //SHOULD ALSO RETURN THE NEXT TURN
+
+    function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
         let firstLookIn: FirstLookIn = new FirstLookIn;
         firstLookIn.playerNumber = mainPlayerNumber;
         firstLookIn.cardsNeeded = {cardsSource: mainPlayerNumber, cardsLocation: [0,3]};
@@ -44,20 +51,46 @@ function GameView() {
         let newPlayersCards = new Map<number,string[]>();
         newPlayersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));
         setPlayersCards(newPlayersCards);
-        setCardsShowed(CardShowedOptions.FirstLook);
+        setPlayerCardsShowed(CardShowedOptions.FirstLook);
 
         setTimeout(() => {
-            setCardsShowed(CardShowedOptions.NoCards);
+            setPlayerCardsShowed(CardShowedOptions.NoCards);
           }, 5000);
         setFirstLookDisabled(true);
         //reset the 'cardsShowed' state
     }
 
 
+    function handleStackClick(isDeck: boolean): string {
+        let takeCardInput: TakeCardIn = new TakeCardIn;
+        takeCardInput.isDeck = isDeck;
+        takeCardInput.playerNumber = mainPlayerNumber;
+        let takeCardAction: TakeCardAction = new TakeCardAction;
+        let cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
+        let cardValue:string = cardOut.cardsRecived[0];
+        return(cardValue)
+
+    }
+
+    function handleDeckClick(): void {
+        let cardReturned = handleStackClick(true);
+        setDeckcardContent(cardReturned);
+        setDeckCardsShowed(true);
+    
+    }
+
+
+    function handlePileClick(): void {
+        let cardReturned = handleStackClick(false);
+        setPilecardContent(cardReturned);
+        setPileCardsShowed(true);
+    }
+    
+
     return (
         <Box>  {/* The 4 cards placements*/}
             <Box className="MainPlayerBox">
-                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={cardsShowed} cardValues={playersCards.get(mainPlayerNumber)}
+                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cardsShowed={playerCardsShowed} cardValues={playersCards.get(mainPlayerNumber)}
                 />
             </Box>
             <Box className="TopPlayerBox">
@@ -65,12 +98,13 @@ function GameView() {
                 />
             </Box>
             <Box className="CardsDeck">
-                <CardsStack mainPlayerNumber={mainPlayerNumber} isDeck={true}/>
+                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handleDeckClick} StackCardContent={deckCardContent} isCardsShowed={isDeckCardsShowed}
+                />
 
             </Box>
             <Box className="UsedPile">
-                <CardsStack mainPlayerNumber={mainPlayerNumber} isDeck={false}/>
-
+                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handlePileClick} StackCardContent={pileCardContent} isCardsShowed={isPileardsShowed}
+                />
             </Box>
             <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
                 First look
@@ -151,37 +185,23 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
 
 interface CardStackProps {
     mainPlayerNumber: number;
-    isDeck: boolean;
-
+    onStackClick: () => void;
+    isCardsShowed: boolean;
+    StackCardContent: string;
 }
 
-function CardsStack({ mainPlayerNumber, isDeck}: Readonly<CardStackProps>) {
-    const [StackCardContent, setStackcardContent] = useState('none');
-    const [isCardsShowed, setCardsShowed] = useState(false);
-
-    function HandleStackClick() {
-        let takeCardInput: TakeCardIn = new TakeCardIn;
-        takeCardInput.isDeck = isDeck;
-        takeCardInput.playerNumber = mainPlayerNumber;
-        let takeCardAction: TakeCardAction = new TakeCardAction;
-        let cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
-        let cardValue:string = cardOut.cardsRecived[0];
-        setStackcardContent(cardValue);
-        setCardsShowed(true);
-
-    }
-
-    function handleclickdummy() {}
+function CardsStack({ mainPlayerNumber, onStackClick,isCardsShowed, StackCardContent }: Readonly<CardStackProps>) {
     
-    return (
+    return(
         <HadHatoolCard
             width={100}
             height={140}
             isShowed={isCardsShowed}
             content={StackCardContent}
-            onClick={handleclickdummy}
+            onClick={onStackClick}
             />
     );
+    
 }
 
 
