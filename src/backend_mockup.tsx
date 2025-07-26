@@ -1,5 +1,5 @@
-export function createNewGame() { //return ID of the new game, and the only card in the usedPile
-    return ([123, 5])
+export function createNewGame() { //return player number of main player, and the only card in the usedPile
+    return ([1, 5])
 }
 
 export function getPlayersCards(player: number, cardslocation: number[]): string[] {
@@ -9,11 +9,10 @@ export function getPlayersCards(player: number, cardslocation: number[]): string
     if (cardslocation.length == 2) {
         return (['6', '7'])
     }
-    if (cardslocation.length == 1) {
+    if (cardslocation.length == 1) { // obviusly will change with real backend, need to be based on the locations
         return (['8'])
     }
-
-    return (['3']) 
+    return (['9']) 
 }
 
 
