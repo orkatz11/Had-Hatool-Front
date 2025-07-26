@@ -1,9 +1,9 @@
-import React, { FC, useState } from 'react';
-import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection, CardActionArea } from '@mui/material';
+import React, { FC, useState, useEffect } from 'react';
+import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection, CardActionArea} from '@mui/material';
 import './game_view.css';
-import './backend_mockup';
+import {createNewGame} from './backend_mockup';
 
-import { FirstLookAction, FirstLookIn, GameActions, TakeCardAction, TakeCardIn, TakeCardOut } from './game_actions';
+import { FirstLookAction, FirstLookIn, GameActions, TakeCardAction, TakeCardIn, TakeCardOut  } from './game_actions';
 
 function createCardsArray(location: number[], values: string[]): string[]{
 
@@ -34,8 +34,15 @@ function GameView() {
 
     const [deckCardContent, setDeckcardContent] = useState('none');
     const [isDeckCardsShowed, setDeckCardsShowed] = useState(false);
-    const [pileCardContent, setPilecardContent] = useState('none');
-    let mainPlayerNumber: number = 1; //should be recived from back in the 'starting game' function
+    const [mainPlayerNumber, setMainPlayerNumber] = useState(0); // Will be filled by the starting game useEffect
+    const [pileCardContent, setPilecardContent] = useState('');  // Will be filled by the starting game useEffect
+    
+    useEffect(() => {
+        let startGameData = createNewGame();
+        setMainPlayerNumber(startGameData[0]); 
+        setPilecardContent(startGameData[1].toString());
+    },
+    [])
 
 
     function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
@@ -57,7 +64,6 @@ function GameView() {
         //reset the 'cardsShowed' state
     }
 
-
     function handleStackClick(isDeck: boolean): string {
         let takeCardInput: TakeCardIn = new TakeCardIn;
         takeCardInput.isDeck = isDeck;
@@ -68,16 +74,13 @@ function GameView() {
         return(cardValue)
     }
 
-    function handleDeckClick(): void {
+    function handleDeckClick(): void {   
         let cardReturned = handleStackClick(true);
         setDeckcardContent(cardReturned);
         setDeckCardsShowed(true);
     }
 
-    function handlePileClick(): void {
-        let cardReturned = handleStackClick(false);
-        setPilecardContent(cardReturned);
-    }
+    function handlePileClick(): void {    }
     
 
     return (
