@@ -1,13 +1,12 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Typography, Button, Grid2, Box, TextField, Card, CardContent, CardActions, CardMedia, GridDirection, CardActionArea} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Typography, Button, Grid2, Box, Card, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './game_view.css';
 import {createNewGame} from './backend_mockup';
 
-import { FirstLookAction, FirstLookIn, GameActions, TakeCardAction, TakeCardIn, TakeCardOut  } from './game_actions';
+import { FirstLookAction, FirstLookIn, TakeCardAction, TakeCardIn, TakeCardOut  } from './game_actions';
 
 function createCardsArray(location: number[], values: string[]): string[]{
-
-    let res = ['none', 'none', 'none', 'none'];
+    const res = ['none', 'none', 'none', 'none'];
     let value_index = 0;
     for (const index of location) {
         res[index] = values[value_index];
@@ -18,7 +17,7 @@ function createCardsArray(location: number[], values: string[]): string[]{
 
 enum CardShowedOptions {
     FirstCard = 0,
-    SecondCard = 1,
+    SecondCard = 1, 
     ThirdCard = 2,
     ForthCard = 3,
     FirstLook = 4,
@@ -26,33 +25,32 @@ enum CardShowedOptions {
     NoCards = 6,
 }
 
-
 function GameView() {
     const [playerCardsShowed, setPlayerCardsShowed] = useState(CardShowedOptions.NoCards);
     const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
 
-    const [deckCardContent, setDeckcardContent] = useState('none');
-    const [isDeckCardsShowed, setDeckCardsShowed] = useState(false);
+    const [deckCardContent, setDeckCardContent] = useState('none');
+    const [isDeckCardsShowed, setIsDeckCardsShowed] = useState(false);
     const [mainPlayerNumber, setMainPlayerNumber] = useState(0); // Will be filled by the starting game useEffect
-    const [pileCardContent, setPilecardContent] = useState('');  // Will be filled by the starting game useEffect
+    const [pileCardContent, setPileCardContent] = useState('');  // Will be filled by the starting game useEffect
     
     useEffect(() => {
-        let startGameData = createNewGame();
+        const startGameData = createNewGame();
         setMainPlayerNumber(startGameData[0]); 
-        setPilecardContent(startGameData[1].toString());
+        setPileCardContent(startGameData[1].toString());
     },
     [])
 
 
     function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
-        let firstLookIn: FirstLookIn = new FirstLookIn;
+        const firstLookIn: FirstLookIn = new FirstLookIn;
         firstLookIn.playerNumber = mainPlayerNumber;
         firstLookIn.cardsNeeded = {cardsSource: mainPlayerNumber, cardsLocation: [0,3]};
-        let firstLookCall = new FirstLookAction;  //creating an object of the action class
-        let firstLookRes = firstLookCall.excecuteAction(firstLookIn);
-        let firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
-        let newPlayersCards = new Map<number,string[]>();
+        const firstLookCall = new FirstLookAction;  //creating an object of the action class
+        const firstLookRes = firstLookCall.excecuteAction(firstLookIn);
+        const firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
+        const newPlayersCards = new Map<number,string[]>();
         newPlayersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));
         setPlayersCards(newPlayersCards);
         setPlayerCardsShowed(CardShowedOptions.FirstLook);
@@ -65,22 +63,22 @@ function GameView() {
     }
 
     function handleStackClick(isDeck: boolean): string {
-        let takeCardInput: TakeCardIn = new TakeCardIn;
+        const takeCardInput: TakeCardIn = new TakeCardIn;
         takeCardInput.isDeck = isDeck;
         takeCardInput.playerNumber = mainPlayerNumber;
-        let takeCardAction: TakeCardAction = new TakeCardAction;
-        let cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
-        let cardValue:string = cardOut.cardsRecived[0];
+        const takeCardAction: TakeCardAction = new TakeCardAction;
+        const cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
+        const cardValue:string = cardOut.cardsRecived[0];
         return(cardValue)
     }
 
     function handleDeckClick(): void {   
-        let cardReturned = handleStackClick(true);
-        setDeckcardContent(cardReturned);
-        setDeckCardsShowed(true);
+        const cardReturned = handleStackClick(true);
+        setDeckCardContent(cardReturned);
+        setIsDeckCardsShowed(true);
     }
 
-    function handlePileClick(): void {    }
+    function handlePileClick(): void { /* document why this function 'handlePileClick' is empty */     }
     
 
     return (
@@ -150,7 +148,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
     else if (cardsShowed == CardShowedOptions.FirstLook) {
         firstLook = true;
     }
-    function TempOnClick(){};
+    function TempOnClick(){ /* for check */ };
 
     return (
 
@@ -168,6 +166,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
                     <HadHatoolCard
                         width={width}
                         height={height}
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                         isShowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
                         content={cardValues[idx]} 
                         onClick={TempOnClick}
@@ -186,6 +185,7 @@ interface CardStackProps {
     StackCardContent: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function CardsStack({ mainPlayerNumber, onStackClick,isCardsShowed, StackCardContent }: Readonly<CardStackProps>) {
     
     return(
