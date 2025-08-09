@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card, CardContent, GridDirection, CardActionArea} from '@mui/material';
-import './game_view.css';
-import {createNewGame} from './backend_mockup';
+import './gameView.css';
+import {createNewGame} from './backendMockup';
 
-import { FirstLookAction, FirstLookIn, TakeCardAction, TakeCardIn, TakeCardOut  } from './game_actions';
+import { FirstLookAction, FirstLookIn, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
 function createCardsArray(location: number[], values: string[]): string[]{
     const res = ['none', 'none', 'none', 'none'];
@@ -166,7 +166,6 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
                     <HadHatoolCard
                         width={width}
                         height={height}
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                         isShowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
                         content={cardValues[idx]} 
                         onClick={TempOnClick}
@@ -179,14 +178,13 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
 
 
 interface CardStackProps {
-    mainPlayerNumber: number;
+    mainPlayerNumber?: number;
     onStackClick: () => void;
     isCardsShowed: boolean;
     StackCardContent: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function CardsStack({ mainPlayerNumber, onStackClick,isCardsShowed, StackCardContent }: Readonly<CardStackProps>) {
+function CardsStack({onStackClick,isCardsShowed, StackCardContent }: Readonly<CardStackProps>) {
     
     return(
         <HadHatoolCard

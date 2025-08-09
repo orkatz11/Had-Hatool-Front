@@ -1,4 +1,4 @@
-import { getPlayersCards, getPileOrDeckCard } from './backend_mockup';
+import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
 
 
 export enum GameActions {
@@ -36,6 +36,7 @@ class ExecutActionOut {
 
 export class GameAction {
 
+    // eslint-disable-next-line 
     executeAction<ExecutActionIn>(input: ExecutActionIn): ExecutActionOut {
         const cardReturned = new ExecutActionOut();
         return cardReturned;

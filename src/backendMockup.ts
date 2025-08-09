@@ -19,10 +19,7 @@ export function getPlayersCards(player: number, cardslocation: number[]): string
 export function getPileOrDeckCard(isDeck: boolean): string {
  if (isDeck) { 
     return('1')}
- if (!isDeck) {
+else {
     return('3')}
-else{
-    return('error');
-}
 
 }
