@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Button, Grid2, Box, Card, CardContent, GridDirection, CardActionArea} from '@mui/material';
+import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
+import {Card, CardValue, UNKNOWN_VALUE} from './card'
 import {createNewGame} from './backendMockup';
 
-import { FirstLookAction, FirstLookIn, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
+import { FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
 function createCardsArray(location: number[], values: string[]): string[]{
     const res = ['none', 'none', 'none', 'none'];
@@ -25,9 +26,10 @@ enum CardShowedOptions {
     NoCards = 6,
 }
 
+
 function GameView() {
     const [playerCardsShowed, setPlayerCardsShowed] = useState(CardShowedOptions.NoCards);
-    const[playersCards, setPlayersCards] = useState(new Map<number,string[]>());
+    const[playersCards, setPlayersCards] = useState(new Map<number,Card[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
 
     const [deckCardContent, setDeckCardContent] = useState('none');
@@ -48,10 +50,10 @@ function GameView() {
         firstLookIn.playerNumber = mainPlayerNumber;
         firstLookIn.cardsNeeded = {cardsSource: mainPlayerNumber, cardsLocation: [0,3]};
         const firstLookCall = new FirstLookAction;  //creating an object of the action class
-        const firstLookRes = firstLookCall.excecuteAction(firstLookIn);
-        const firstLookCards : string[] = firstLookRes.cardsRecived; //reciving the cards from the back
-        const newPlayersCards = new Map<number,string[]>();
-        newPlayersCards.set(mainPlayerNumber, createCardsArray(firstLookIn.cardsNeeded.cardsLocation,firstLookCards));
+        const firstLookRes: FirstLookOut = firstLookCall.excecuteAction(firstLookIn);
+        const firstLookCards : Card[] = firstLookRes.cardsRecived; //reciving the cards from the back
+        const newPlayersCards = new Map<number,Card[]>();
+        newPlayersCards.set(mainPlayerNumber, firstLookCards);
         setPlayersCards(newPlayersCards);
         setPlayerCardsShowed(CardShowedOptions.FirstLook);
 
@@ -134,12 +136,12 @@ interface PlayerHandProps {
     columns: number;
     direction: GridDirection;
     cardsShowed: CardShowedOptions; // 0-3 ->  specific card, 4 -> hidden, 5 -> first look
-    cardValues?: string[];
+    cardValues: Card[]; // an array of Card
 
 }
 
 
-function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues = ['none', 'none', 'none', 'none'] }: Readonly<PlayerHandProps>) {
+function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues }: Readonly<PlayerHandProps>) {
     let cardShown = CardShowedOptions.NoCards;
     let firstLook = false;
     if (cardsShowed == CardShowedOptions.FirstCard || cardsShowed == CardShowedOptions.SecondCard || cardsShowed == CardShowedOptions.ThirdCard || cardsShowed == CardShowedOptions.ForthCard) {
@@ -167,7 +169,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
                         width={width}
                         height={height}
                         isShowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
-                        content={cardValues[idx]} 
+                        content={cardValues[idx].value} 
                         onClick={TempOnClick}
                         />
                 </Grid2>
@@ -202,26 +204,26 @@ function CardsStack({onStackClick,isCardsShowed, StackCardContent }: Readonly<Ca
 interface HadHatoolCardProps {
     width: number;
     height: number;
-    isShowed: boolean;
-    content: string;
+    card: Card;
     onClick: () => void; 
 }
 
 
-function HadHatoolCard({ width, height, isShowed, content, onClick}: Readonly<HadHatoolCardProps>) {
+function HadHatoolCard({ width, height, card, onClick}: Readonly<HadHatoolCardProps>) {
     return (
-        <Card sx={{
+        <CardMUI sx={{
             width: width,
             height: height
         }}>
             <CardActionArea onClick={onClick}>
                 <CardContent>
                     <Typography variant="h4" component="div" textAlign={"center"}>
+                        {if (card.value == UNKNOWN_VALUE?) {card.value} else {null} } //figure out how to do the 'show' part with the new Card class
                         {isShowed ? content : null}
                     </Typography>
                 </CardContent>
             </CardActionArea>
-        </Card>
+        </CardMUI>
     );
 }
 

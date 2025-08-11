@@ -1,4 +1,5 @@
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
+import {Card, CardValue } from './card'
 
 
 export enum GameActions {
@@ -7,7 +8,7 @@ export enum GameActions {
 }
 
 interface GetCardsExcecuteInput {
-    cardsSource: number;  // 5 = deck, 6 = pile
+    cardsSource: number;  // 5 = deck, 6 = pile   //NEED TO CHANGE TO ENUM
     cardsLocation: number[];
 
 }
@@ -25,7 +26,7 @@ class ExecutActionIn {
 
 class ExecutActionOut {
 
-    cardsRecived: string[];
+    cardsRecived: Card[];
     nextTurn: number;
 
     constructor() {
@@ -62,14 +63,13 @@ export class FirstLookOut extends ExecutActionOut{
 
 export class FirstLookAction extends GameAction {
     excecuteAction(firstLookIn: FirstLookIn): FirstLookOut {
-        const cards: string[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
+        const cards: Card[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
         const res: FirstLookOut = new FirstLookOut;
         res.cardsRecived = cards;
         // res.nextTurn = getNextTurn() !!
 
         return res;
     }
-
 }
 
 export class TakeCardIn extends ExecutActionIn {
@@ -94,9 +94,9 @@ export class TakeCardOut extends ExecutActionOut {
 
 export class TakeCardAction extends GameAction {
     excecuteAction(takeCardIn: TakeCardIn): TakeCardOut {
-        const card: string = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
+        const card: Card = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
         const res: FirstLookOut = new FirstLookOut;
-        res.cardsRecived[0] =  card;
+        //res.cardsRecived[0] =  card;   --> FIX
         // res.nextTurn = getNextTurn() !!
 
         return res;

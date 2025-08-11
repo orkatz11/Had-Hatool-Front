@@ -1,7 +1,7 @@
-export {Card, CardValue}
+export {HadHatoolCard as Card, HadHatoolCardValue as CardValue}
 
 
-enum CardValue{
+enum HadHatoolCardValue{
 Zero = 0,
 One = 1, 
 Two = 2, 
@@ -20,21 +20,15 @@ Ten = 10,
 export const UNKNOWN_VALUE = 300;
 export type UnknownValue = typeof UNKNOWN_VALUE;
 
-class Card{
-    value: CardValue | UnknownValue;
+class HadHatoolCard{
+    value: HadHatoolCardValue | UnknownValue;
 
-    constructor(newCardValue?: CardValue | UnknownValue) {
+    constructor(newCardValue?: HadHatoolCardValue | UnknownValue) {
         if (newCardValue != null){ 
             this.value = newCardValue;
         }
         else{ 
             this.value = UNKNOWN_VALUE;
         }
-    }
-
-
-
-
-
-    
+    } 
 }
