@@ -2,10 +2,33 @@ import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
 import {Card, CardValue } from './card'
 
 
+export class CreateNewGameOut {
+    mainPlayerNumber: number; 
+    pileCard: Card
+
+    constructor (){
+        this.mainPlayerNumber = 1;
+        this.pileCard = new Card;
+
+    }
+
+}
+
+export function createNewGame():CreateNewGameOut { //return player number of main player, and the only card in the usedPile
+    const pile_card = new Card;
+    pile_card.value = CardValue.Five
+    const newGameResult = new CreateNewGameOut
+    newGameResult.mainPlayerNumber = 1
+    newGameResult.pileCard = pile_card
+    return (newGameResult)
+}
+
+
 export enum GameActions {
     FirstLook = 'firstLook',
     PickCard = 'pickCard',
 }
+
 
 interface GetCardsExcecuteInput {
     cardsSource: number;  // 5 = deck, 6 = pile   //NEED TO CHANGE TO ENUM
@@ -64,7 +87,7 @@ export class FirstLookOut extends ExecutActionOut{
 export class FirstLookAction extends GameAction {
     excecuteAction(firstLookIn: FirstLookIn): FirstLookOut {
         const cards: Card[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
-        const res: FirstLookOut = new FirstLookOut;
+        const res: FirstLookOut = new FirstLookOut();
         res.cardsRecived = cards;
         // res.nextTurn = getNextTurn() !!
 
@@ -95,7 +118,8 @@ export class TakeCardOut extends ExecutActionOut {
 export class TakeCardAction extends GameAction {
     excecuteAction(takeCardIn: TakeCardIn): TakeCardOut {
         const card: Card = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
-        const res: FirstLookOut = new FirstLookOut;
+        const res: TakeCardOut = new TakeCardOut();
+        res.cardsRecived = [card];
         //res.cardsRecived[0] =  card;   --> FIX
         // res.nextTurn = getNextTurn() !!
 

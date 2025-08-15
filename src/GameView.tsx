@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
-import {Card, CardValue, UNKNOWN_VALUE} from './card'
-import {createNewGame} from './backendMockup';
-
-import { FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
+import {Card, CardValue, createPlayerHandByLocation, UNKNOWN_VALUE} from './card'
+import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
 function createCardsArray(location: number[], values: string[]): string[]{
     const res = ['none', 'none', 'none', 'none'];
@@ -16,68 +14,60 @@ function createCardsArray(location: number[], values: string[]): string[]{
     return res
 }
 
-enum CardShowedOptions {
-    FirstCard = 0,
-    SecondCard = 1, 
-    ThirdCard = 2,
-    ForthCard = 3,
-    FirstLook = 4,
-    AllCards = 5,
-    NoCards = 6,
-}
-
 
 function GameView() {
-    const [playerCardsShowed, setPlayerCardsShowed] = useState(CardShowedOptions.NoCards);
     const[playersCards, setPlayersCards] = useState(new Map<number,Card[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
 
-    const [deckCardContent, setDeckCardContent] = useState('none');
-    const [isDeckCardsShowed, setIsDeckCardsShowed] = useState(false);
+    const [deckCard, setDeckCard] = useState(new Card);
+    // const [isDeckCardsShowed, setIsDeckCardsShowed] = useState(false);
     const [mainPlayerNumber, setMainPlayerNumber] = useState(0); // Will be filled by the starting game useEffect
-    const [pileCardContent, setPileCardContent] = useState('');  // Will be filled by the starting game useEffect
+    const [pileCard, setPileCard] = useState(new Card);  // Will be filled by the starting game useEffect
     
     useEffect(() => {
         const startGameData = createNewGame();
-        setMainPlayerNumber(startGameData[0]); 
-        setPileCardContent(startGameData[1].toString());
+        setMainPlayerNumber(startGameData.mainPlayerNumber); 
+        setPileCard(startGameData.pileCard);
     },
     [])
 
 
     function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
         const firstLookIn: FirstLookIn = new FirstLookIn;
+        const cardsLocation = [0,3];
         firstLookIn.playerNumber = mainPlayerNumber;
-        firstLookIn.cardsNeeded = {cardsSource: mainPlayerNumber, cardsLocation: [0,3]};
+        firstLookIn.cardsNeeded = {cardsSource: mainPlayerNumber, cardsLocation: cardsLocation};
         const firstLookCall = new FirstLookAction;  //creating an object of the action class
-        const firstLookRes: FirstLookOut = firstLookCall.excecuteAction(firstLookIn);
+        const firstLookRes: FirstLookOut = firstLookCall.excecuteAction(firstLookIn); // recieve the 2 cards wanted, in the 0,3 locations
         const firstLookCards : Card[] = firstLookRes.cardsRecived; //reciving the cards from the back
         const newPlayersCards = new Map<number,Card[]>();
-        newPlayersCards.set(mainPlayerNumber, firstLookCards);
+        const playerHand : Card[]= createPlayerHandByLocation(cardsLocation,firstLookCards )
+        newPlayersCards.set(mainPlayerNumber, playerHand);
         setPlayersCards(newPlayersCards);
-        setPlayerCardsShowed(CardShowedOptions.FirstLook);
 
         setTimeout(() => {
-            setPlayerCardsShowed(CardShowedOptions.NoCards);
+            const emptyHand: Card[]= Array.from({ length: 4 }, () => new Card());  // createing a new empty hand after time's up
+            const mainPlayerEmptyHand = new Map<number,Card[]>();
+            mainPlayerEmptyHand.set(mainPlayerNumber, emptyHand);
+            setPlayersCards(mainPlayerEmptyHand);
           }, 5000);
         setFirstLookDisabled(true);
         //reset the 'cardsShowed' state
     }
 
-    function handleStackClick(isDeck: boolean): string {
+    function handleStackClick(isDeck: boolean): Card {
         const takeCardInput: TakeCardIn = new TakeCardIn;
         takeCardInput.isDeck = isDeck;
         takeCardInput.playerNumber = mainPlayerNumber;
         const takeCardAction: TakeCardAction = new TakeCardAction;
-        const cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);
-        const cardValue:string = cardOut.cardsRecived[0];
-        return(cardValue)
+        const cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);  // returns [Card]
+        const card: Card = cardOut.cardsRecived[0];
+        return(card)
     }
 
     function handleDeckClick(): void {   
         const cardReturned = handleStackClick(true);
-        setDeckCardContent(cardReturned);
-        setIsDeckCardsShowed(true);
+        setDeckCard(cardReturned);
     }
 
     function handlePileClick(): void { /* document why this function 'handlePileClick' is empty */     }
@@ -94,12 +84,12 @@ function GameView() {
                 />
             </Box>
             <Box className="CardsDeck">
-                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handleDeckClick} StackCardContent={deckCardContent} isCardsShowed={isDeckCardsShowed}
+                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handleDeckClick} stackHighestCard={deckCardContent} 
                 />
 
             </Box>
             <Box className="UsedPile">
-                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handlePileClick} StackCardContent={pileCardContent} isCardsShowed={true}
+                <CardsStack mainPlayerNumber={mainPlayerNumber} onStackClick={handlePileClick} stackHighestCard={pileCardContent}
                 />
             </Box>
             <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
@@ -135,21 +125,12 @@ interface PlayerHandProps {
     spacing: number;
     columns: number;
     direction: GridDirection;
-    cardsShowed: CardShowedOptions; // 0-3 ->  specific card, 4 -> hidden, 5 -> first look
-    cardValues: Card[]; // an array of Card
-
+    cards: Card[]
 }
 
 
-function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, cardValues }: Readonly<PlayerHandProps>) {
-    let cardShown = CardShowedOptions.NoCards;
-    let firstLook = false;
-    if (cardsShowed == CardShowedOptions.FirstCard || cardsShowed == CardShowedOptions.SecondCard || cardsShowed == CardShowedOptions.ThirdCard || cardsShowed == CardShowedOptions.ForthCard) {
-        cardShown = cardsShowed;
-    }
-    else if (cardsShowed == CardShowedOptions.FirstLook) {
-        firstLook = true;
-    }
+function PlayerHand({ width, height, spacing, columns, direction, cards}: Readonly<PlayerHandProps>) {
+    
     function TempOnClick(){ /* for check */ };
 
     return (
@@ -168,8 +149,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
                     <HadHatoolCard
                         width={width}
                         height={height}
-                        isShowed={(cardShown == idx) || ((firstLook) && (idx == 0 || (idx == 3)))}
-                        content={cardValues[idx].value} 
+                        card={cards[idx]} 
                         onClick={TempOnClick}
                         />
                 </Grid2>
@@ -182,18 +162,16 @@ function PlayerHand({ width, height, spacing, columns, direction, cardsShowed, c
 interface CardStackProps {
     mainPlayerNumber?: number;
     onStackClick: () => void;
-    isCardsShowed: boolean;
-    StackCardContent: string;
+    stackHighestCard: Card;
 }
 
-function CardsStack({onStackClick,isCardsShowed, StackCardContent }: Readonly<CardStackProps>) {
+function CardsStack({onStackClick, stackHighestCard}: Readonly<CardStackProps>) {
     
     return(
         <HadHatoolCard
             width={100}
             height={140}
-            isShowed={isCardsShowed}
-            content={StackCardContent}
+            card={stackHighestCard}
             onClick={onStackClick}
             />
     );
@@ -209,7 +187,9 @@ interface HadHatoolCardProps {
 }
 
 
-function HadHatoolCard({ width, height, card, onClick}: Readonly<HadHatoolCardProps>) {
+function HadHatoolCard({ width, height, card, onClick}: Readonly<HadHatoolCardProps>) {  //!!!! FIX THE FACT THAT CARD.VALUE IS ENUM AND NOT THE STRING OF NUMBER IN THE COMPONENT. 
+    let isShowed = false
+    if (card.value == UNKNOWN_VALUE) {isShowed = true}
     return (
         <CardMUI sx={{
             width: width,
@@ -218,8 +198,7 @@ function HadHatoolCard({ width, height, card, onClick}: Readonly<HadHatoolCardPr
             <CardActionArea onClick={onClick}>
                 <CardContent>
                     <Typography variant="h4" component="div" textAlign={"center"}>
-                        {if (card.value == UNKNOWN_VALUE?) {card.value} else {null} } //figure out how to do the 'show' part with the new Card class
-                        {isShowed ? content : null}
+                        {isShowed ? card.value : null} 
                     </Typography>
                 </CardContent>
             </CardActionArea>

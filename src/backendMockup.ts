@@ -2,9 +2,6 @@ import {Card, CardValue} from './card'
 
 
 
-export function createNewGame() { //return player number of main player, and the only card in the usedPile
-    return ([1, 5])
-}
 
 export function getPlayersCards(player: number, cardslocation: number[]): Card[] {
     const card1 = new Card(CardValue.One)

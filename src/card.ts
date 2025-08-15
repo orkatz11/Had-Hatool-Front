@@ -1,6 +1,5 @@
 export {HadHatoolCard as Card, HadHatoolCardValue as CardValue}
 
-
 enum HadHatoolCardValue{
 Zero = 0,
 One = 1, 
@@ -32,3 +31,18 @@ class HadHatoolCard{
         }
     } 
 }
+
+
+export function createPlayerHandByLocation(locations: number[], cards: HadHatoolCard[]) :HadHatoolCard[] {
+
+    const playerHand: HadHatoolCard[] = Array.from({ length: 4 }, () => new HadHatoolCard());
+
+    for (let locationIndex:number = 0; locationIndex < 4; locationIndex++) {
+
+            playerHand[locations[locationIndex]] =  cards[locationIndex]; 
+            locationIndex++;  // moving to the next location needed to feel, they are sorted so this will work
+        }
+    
+        return(playerHand);
+    }      
+    
