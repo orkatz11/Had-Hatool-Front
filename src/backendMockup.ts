@@ -1,4 +1,4 @@
-import {Card, CardValue} from './card'
+import {Card, CardValue} from './gameClasses'
 
 
 

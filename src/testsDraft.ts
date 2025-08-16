@@ -1,4 +1,4 @@
-import { Card, createPlayerHandByLocation } from './card';
+import { Card, createPlayerHandByLocation } from './gameClasses';
 
 class handCreationTest {
     hand1InputLocation : number[];

@@ -1,13 +1,13 @@
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
-import {Card, CardValue } from './card'
+import {Card, CardValue } from './gameClasses'
 
 
 export class CreateNewGameOut {
-    mainPlayerNumber: number; 
+    playerIdNumbers: number[]; 
     pileCard: Card
 
     constructor (){
-        this.mainPlayerNumber = 1;
+        this.playerIdNumbers = [1, 2];
         this.pileCard = new Card;
 
     }
@@ -18,7 +18,7 @@ export function createNewGame():CreateNewGameOut { //return player number of mai
     const pile_card = new Card;
     pile_card.value = CardValue.Five
     const newGameResult = new CreateNewGameOut
-    newGameResult.mainPlayerNumber = 1
+    newGameResult.playerIdNumbers = [1, 2]
     newGameResult.pileCard = pile_card
     return (newGameResult)
 }
