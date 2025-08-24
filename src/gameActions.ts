@@ -1,4 +1,27 @@
-import { getPlayersCards, getPileOrDeckCard } from './backend_mockup';
+import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
+import {Card, CardValue } from './gameClasses'
+
+
+export class CreateNewGameOut {
+    playerIdNumbers: number[]; 
+    pileCard: Card
+
+    constructor (){
+        this.playerIdNumbers = [1, 2];
+        this.pileCard = new Card;
+
+    }
+
+}
+
+export function createNewGame():CreateNewGameOut { //return player number of main player, and the only card in the usedPile
+    const pile_card = new Card;
+    pile_card.value = CardValue.Five
+    const newGameResult = new CreateNewGameOut
+    newGameResult.playerIdNumbers = [1, 2]
+    newGameResult.pileCard = pile_card
+    return (newGameResult)
+}
 
 
 export enum GameActions {
@@ -6,8 +29,9 @@ export enum GameActions {
     PickCard = 'pickCard',
 }
 
+
 interface GetCardsExcecuteInput {
-    cardsSource: number;  // 5 = deck, 6 = pile
+    cardsSource: number;  // 5 = deck, 6 = pile   //NEED TO CHANGE TO ENUM
     cardsLocation: number[];
 
 }
@@ -25,7 +49,7 @@ class ExecutActionIn {
 
 class ExecutActionOut {
 
-    cardsRecived: string[];
+    cardsRecived: Card[];
     nextTurn: number;
 
     constructor() {
@@ -36,6 +60,7 @@ class ExecutActionOut {
 
 export class GameAction {
 
+    // eslint-disable-next-line 
     executeAction<ExecutActionIn>(input: ExecutActionIn): ExecutActionOut {
         const cardReturned = new ExecutActionOut();
         return cardReturned;
@@ -61,14 +86,13 @@ export class FirstLookOut extends ExecutActionOut{
 
 export class FirstLookAction extends GameAction {
     excecuteAction(firstLookIn: FirstLookIn): FirstLookOut {
-        const cards: string[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
-        const res: FirstLookOut = new FirstLookOut;
+        const cards: Card[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
+        const res: FirstLookOut = new FirstLookOut();
         res.cardsRecived = cards;
         // res.nextTurn = getNextTurn() !!
 
         return res;
     }
-
 }
 
 export class TakeCardIn extends ExecutActionIn {
@@ -93,9 +117,10 @@ export class TakeCardOut extends ExecutActionOut {
 
 export class TakeCardAction extends GameAction {
     excecuteAction(takeCardIn: TakeCardIn): TakeCardOut {
-        const card: string = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
-        const res: FirstLookOut = new FirstLookOut;
-        res.cardsRecived[0] =  card;
+        const card: Card = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
+        const res: TakeCardOut = new TakeCardOut();
+        res.cardsRecived = [card];
+        //res.cardsRecived[0] =  card;   --> FIX
         // res.nextTurn = getNextTurn() !!
 
         return res;

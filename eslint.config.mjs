@@ -24,6 +24,9 @@ export default tseslint.config(
     rules: {
       // desabled becuase there are cases where using 3rd party/build in JS functions, we know it will never return null
       "@typescript-eslint/no-non-null-assertion": "off",
+      // changed TEMPORARLY since I need to change this code anyway
+      "@typescript-eslint/no-unsafe-enum-comparison": "off",
+
     }
   },
   // Enable TypeScript parser for ES lint rules that require type checking

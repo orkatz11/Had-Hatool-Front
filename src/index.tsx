@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import Game_view from './game_view';
+import Game_view from './GameView';
 
 
 const root = ReactDOM.createRoot(
