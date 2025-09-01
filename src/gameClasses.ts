@@ -49,3 +49,6 @@ export function createPlayerHandByLocation(locations?: number[], cards? : HadHat
     
 }
 
+
+
+

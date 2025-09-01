@@ -1,25 +1,31 @@
+import api from './api';
+import {createNewGameApiCall, apiResultNewGame} from './apiHandaling';
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
 import {Card, CardValue } from './gameClasses'
 
 
 export class CreateNewGameOut {
+    gameIdNumber: number;
     playerIdNumbers: number[]; 
     pileCard: Card
 
     constructor (){
+        this.gameIdNumber = 15;
         this.playerIdNumbers = [1, 2];
         this.pileCard = new Card;
-
     }
 
 }
 
-export function createNewGame():CreateNewGameOut { //return player number of main player, and the only card in the usedPile
+
+export async function createNewGame(): Promise<CreateNewGameOut> { //return player number of main player, and the only card in the usedPile
     const pile_card = new Card;
-    pile_card.value = CardValue.Five
-    const newGameResult = new CreateNewGameOut
-    newGameResult.playerIdNumbers = [1, 2]
-    newGameResult.pileCard = pile_card
+    // pile_card.value = CardValue.Five
+    let result : apiResultNewGame = await createNewGameApiCall()
+    const newGameResult = new CreateNewGameOut  // needs to be an API call + takes result json and inserts it to the newgameout object
+    newGameResult.playerIdNumbers = result.player_numbers;
+    newGameResult.pileCard = new Card(Number(result.pile_Card) as CardValue);
+    newGameResult.gameIdNumber = result.game_id;
     return (newGameResult)
 }
 

@@ -16,12 +16,14 @@ function GameView() {
     const [pileCard, setPileCard] = useState(new Card);  // Will be filled by the starting game useEffect
     
     useEffect(() => {
-        const startGameData = createNewGame();
+        const startGameData: CreateNewGameOut = async () => {
+            const result = await createNewGame();}
         setPlayerIdNumbers(startGameData.playerIdNumbers); 
         setPileCard(startGameData.pileCard);
     },
     [])
 
+//use the first solution 
 
     function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
         const firstLookIn: FirstLookIn = new FirstLookIn;
