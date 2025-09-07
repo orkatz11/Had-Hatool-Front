@@ -1,27 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
-import {Card, CardValue, createPlayerHandByLocation, UNKNOWN_VALUE} from './gameClasses'
+import {Card, createPlayerHandByLocation, UNKNOWN_VALUE} from './gameClasses'
 import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
 
 
 function GameView() {
-    const[allPlayersCards, setallPlayersCards] = useState(new Map<number,Card[]>());
+    const [allPlayersCards, setAllPlayersCards] = useState(new Map<number,Card[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
 
     const [deckCard, setDeckCard] = useState(new Card);
-    // const [isDeckCardsShowed, setIsDeckCardsShowed] = useState(false);
     const [playerIdNumbers, setPlayerIdNumbers] = useState([0]); // Should be Map object, in future (will create typing problems with get func)
     const [pileCard, setPileCard] = useState(new Card);  // Will be filled by the starting game useEffect
     
     useEffect(() => {
-        const startGameData = createNewGame();
-        setPlayerIdNumbers(startGameData.playerIdNumbers); 
-        setPileCard(startGameData.pileCard);
+        const helperGetGame = async (): Promise<void> => {
+            try {
+                const result: CreateNewGameOut= await createNewGame();
+                console.log(result);
+                setPlayerIdNumbers(result.playerIdNumbers); 
+                setPileCard(result.pileCard);
+            } catch(err) {
+                console.error("createNewGame failed:", err);
+            }
+        };
+        void helperGetGame();
     },
-    [])
+    []);
 
+//use the first solution 
 
     function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
         const firstLookIn: FirstLookIn = new FirstLookIn;
@@ -34,13 +42,13 @@ function GameView() {
         const newallPlayersCards = new Map<number,Card[]>();
         const playerHand : Card[]= createPlayerHandByLocation(cardsLocation,firstLookCards )
         newallPlayersCards.set( firstLookIn.playerNumber, playerHand);
-        setallPlayersCards(newallPlayersCards);
+        setAllPlayersCards(newallPlayersCards);
 
         setTimeout(() => {
             const emptyHand: Card[]= createPlayerHandByLocation();  // getting a new empty hand after time's up
             const mainPlayerEmptyHand = new Map<number,Card[]>();
             mainPlayerEmptyHand.set( firstLookIn.playerNumber, emptyHand);
-            setallPlayersCards(mainPlayerEmptyHand);
+            setAllPlayersCards(mainPlayerEmptyHand);
           }, 5000);
         setFirstLookDisabled(true);
         //reset the 'cardsShowed' state
