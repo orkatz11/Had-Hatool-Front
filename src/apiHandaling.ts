@@ -2,22 +2,20 @@ import api from './api'
 
 
 
-export interface apiResultNewGame {
+export interface ApiResultNewGame {
     game_id: number;
     player_numbers: number[]
     pile_Card: string
   }
 
 
-export  async function createNewGameApiCall(): Promise<apiResultNewGame> {
+export  async function createNewGameApiCall(): Promise<ApiResultNewGame> {
     try {
-        let newGameResponse =  await api.post('/api/v1/gameplay/newgame');
-        let resultData = newGameResponse.data as apiResultNewGame;
+        const newGameResponse =  await api.post('/api/v1/gameplay/newgame');
+        const resultData = newGameResponse.data as ApiResultNewGame;
         return(resultData);
       } catch (error) {
         console.error('Error fetching new game:', error);
         throw error;
       }
 }
-
-export default createNewGameApiCall

@@ -38,7 +38,7 @@ export function createPlayerHandByLocation(locations?: number[], cards? : HadHat
     const playerHand: HadHatoolCard[] = Array.from({ length: 4 }, () => new HadHatoolCard());
 
     if (cards != null && locations != null) {
-        for (let locationIndex:number = 0; locationIndex < locations.length+1; locationIndex++) {
+        for (let locationIndex = 0; locationIndex < locations.length+1; locationIndex++) {
 
             playerHand[locations[locationIndex]] =  cards[locationIndex]; 
         }
@@ -48,7 +48,3 @@ export function createPlayerHandByLocation(locations?: number[], cards? : HadHat
     return(playerHand);
     
 }
-
-
-
-
