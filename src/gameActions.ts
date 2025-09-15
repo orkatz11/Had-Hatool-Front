@@ -17,8 +17,8 @@ export class CreateNewGameOut {
 }
 
 
-export async function createNewGame(): Promise<CreateNewGameOut> { //return player number of main player, and the only card in the usedPile
-    const result : ApiResultNewGame = await createNewGameApiCall()
+export async function createNewGame(user_id: number): Promise<CreateNewGameOut> { //return player number of main player, and the only card in the usedPile
+    const result : ApiResultNewGame = await createNewGameApiCall(user_id)
     const newGameResult = new CreateNewGameOut  // needs to be an API call + takes result json and inserts it to the newgameout object
     newGameResult.playerIdNumbers = result.player_numbers;
     newGameResult.pileCard = new Card(Number(result.pile_Card) as CardValue);

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
-import {Card, createPlayerHandByLocation, UNKNOWN_VALUE} from './gameClasses'
+import {Card, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
 import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
-
 
 
 function GameView() {
@@ -17,7 +16,7 @@ function GameView() {
     useEffect(() => {
         const helperGetGame = async (): Promise<void> => {
             try {
-                const result: CreateNewGameOut= await createNewGame();
+                const result: CreateNewGameOut= await createNewGame(user_id);
                 console.log(result);
                 setPlayerIdNumbers(result.playerIdNumbers); 
                 setPileCard(result.pileCard);
