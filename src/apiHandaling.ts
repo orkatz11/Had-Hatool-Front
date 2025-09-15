@@ -9,9 +9,9 @@ export interface ApiResultNewGame {
   }
 
 
-export  async function createNewGameApiCall(): Promise<ApiResultNewGame> {
+export  async function createNewGameApiCall(user_id: number): Promise<ApiResultNewGame> {
     try {
-        const newGameResponse =  await api.post('/api/v1/gameplay/newgame');
+        const newGameResponse =  await api.post(`/api/v1/${user_id}/gameplay/newgame`);
         const resultData = newGameResponse.data as ApiResultNewGame;
         return(resultData);
       } catch (error) {

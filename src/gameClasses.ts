@@ -15,7 +15,7 @@ Ten = 10,
 // Add special card Values in the future
 }
 
-
+export const user_id = 1;
 export const UNKNOWN_VALUE = 300;
 export type UnknownValue = typeof UNKNOWN_VALUE;
 
