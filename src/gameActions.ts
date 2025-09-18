@@ -1,6 +1,7 @@
 import {createNewGameApiCall, ApiResultNewGame} from './apiHandaling';
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
 import {Card, CardValue } from './gameClasses'
+import {string_to_card_value_enum} from './utils'
 
 
 export class CreateNewGameOut {
@@ -21,7 +22,7 @@ export async function createNewGame(user_id: number): Promise<CreateNewGameOut> 
     const result : ApiResultNewGame = await createNewGameApiCall(user_id)
     const newGameResult = new CreateNewGameOut  // needs to be an API call + takes result json and inserts it to the newgameout object
     newGameResult.playerIdNumbers = result.player_numbers;
-    newGameResult.pileCard = new Card(Number(result.pile_Card) as CardValue);
+    newGameResult.pileCard = new Card(string_to_card_value_enum(result.pile_Card))
     newGameResult.gameIdNumber = result.game_id;
     return (newGameResult)
 }

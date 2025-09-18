@@ -1,17 +1,20 @@
 export {HadHatoolCard as Card, HadHatoolCardValue as CardValue}
 
 enum HadHatoolCardValue{
-Zero = 0,
-One = 1, 
-Two = 2, 
-Three = 3,
-Four = 4,
-Five = 5,
-Six = 6, 
-Seven = 7, 
-Eight = 8, 
-Nine = 9,
-Ten = 10,
+ZERO = 0,
+ONE = 1, 
+TWO = 2, 
+THREE = 3,
+FOUR = 4,
+FIVE = 5,
+SIX = 6, 
+SEVEN = 7, 
+EIGHT = 8, 
+NINE = 9,
+PEAK = 10,
+DRAW2 = 11,
+SWAP = 12,
+Ten
 // Add special card Values in the future
 }
 
