@@ -4,16 +4,15 @@ import {Card, CardValue} from './gameClasses'
 
 
 export function getPlayersCards(player: number, cardslocation: number[]): Card[] {
-    const card1 = new Card(CardValue.One)
-    const card2 = new Card(CardValue.Two);
-    const card3 = new Card(CardValue.Three);
-    const card4 = new Card(CardValue.Four);
-    const card5 = new Card(CardValue.Five);
-    const card6 = new Card(CardValue.Six);
-    const card7 = new Card(CardValue.Seven);
-    const card8 = new Card(CardValue.Eight);
-    const card9 = new Card(CardValue.Nine);
-    const card10 = new Card(CardValue.Ten);
+    const card1 = new Card(CardValue.ONE)
+    const card2 = new Card(CardValue.TWO);
+    const card3 = new Card(CardValue.THREE);
+    const card4 = new Card(CardValue.FOUR);
+    const card5 = new Card(CardValue.FIVE);
+    const card6 = new Card(CardValue.SIX);
+    const card7 = new Card(CardValue.SEVEN);
+    const card8 = new Card(CardValue.EIGHT);
+    const card9 = new Card(CardValue.NINE);
 
     if (cardslocation.length == 4) {
 
@@ -29,8 +28,8 @@ export function getPlayersCards(player: number, cardslocation: number[]): Card[]
 }
 
 export function getPileOrDeckCard(isDeck: boolean): Card {
-    const card1 = new Card(CardValue.One);
-    const card3 = new Card(CardValue.Three);
+    const card1 = new Card(CardValue.ONE);
+    const card3 = new Card(CardValue.THREE);
     if (isDeck) { 
         return(card1)}
     else {
