@@ -5,6 +5,29 @@ import {Card, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameCl
 import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
 
+function GameTable({ children }: { children?: React.ReactNode }) {
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: 900,           // overall width
+                height: 400,          // overall height
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: '#0b6623',
+                border: '5px solid #3e3e3e',
+                borderRadius: '200px', // = height / 2
+                zIndex: 0,
+                overflow: 'visible',
+            }}
+            
+        >
+            {children}
+        </Box>
+    );
+}
+
 function GameView() {
     const [allPlayersCards, setAllPlayersCards] = useState(new Map<number,Card[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
@@ -73,49 +96,33 @@ function GameView() {
 
     return (
         <Box>  {/* The 4 cards placements*/}
-            <Box className="MainPlayerBox">
-                <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cards={allPlayersCards.get(playerIdNumbers[0]) ?? createPlayerHandByLocation()}  // get the Cards array form the playerCards map, if it is undefigned - return an empty Card array.
-                />
-            </Box>
-            <Box className="TopPlayerBox">
-                <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cards={allPlayersCards.get(playerIdNumbers[1]) ?? createPlayerHandByLocation()}
-                />
-            </Box>
-            <Box className="CardsDeck">
-                <CardsStack  onStackClick={handleDeckClick} stackHighestCard={deckCard} 
-                />
+            <GameTable>
+                <Box className="MainPlayerBox">
+                    <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cards={allPlayersCards.get(playerIdNumbers[0]) ?? createPlayerHandByLocation()}  // get the Cards array form the playerCards map, if it is undefigned - return an empty Card array.
+                    />
+                </Box>
+                <Box className="TopPlayerBox">
+                    <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cards={allPlayersCards.get(playerIdNumbers[1]) ?? createPlayerHandByLocation()}
+                    />
+                </Box>
+                <Box className="CardsDeck">
+                    <CardsStack  onStackClick={handleDeckClick} stackHighestCard={deckCard} 
+                    />
 
-            </Box>
-            <Box className="UsedPile">
-                <CardsStack  onStackClick={handlePileClick} stackHighestCard={pileCard}
-                />
-            </Box>
-            <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick}>
-                First look
-            </Button>
-            <GameTable />
+                </Box>
+                <Box className="UsedPile">
+                    <CardsStack  onStackClick={handlePileClick} stackHighestCard={pileCard}
+                    />
+                </Box>
+                <Button disabled = {firstLookDisabled} onClick={handleFirstLookClick} className='FirstLookButton'>
+                    First look
+                </Button>
+            </GameTable>
         </Box>
     );
 }
 
-function GameTable() {
-    return (
-        <Box
-            sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                width: 900,           // overall width
-                height: 400,          // overall height
-                transform: 'translate(-50%, -50%)',
-                backgroundColor: '#0b6623',
-                border: '5px solid #3e3e3e',
-                borderRadius: '200px', // = height / 2
-                zIndex: 0,
-            }}
-        />
-    );
-}
+
 
 interface PlayerHandProps {
     width: number;

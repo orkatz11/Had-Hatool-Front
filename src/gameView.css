@@ -1,50 +1,45 @@
 .MainPlayerBox {
     position: absolute;
-    bottom: 40px;
-    left: 0;
-    width: 100%;
+    bottom: -110px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 150%;
     z-index: 1;
 }
-
-/* .PlayerTwoBox {
-    position: absolute;
-    bottom: 220px;
-    left: 1180px;
-    width: 100%;
-    pointer-events: none;
-    z-index: 1;
-} */
 
 .TopPlayerBox {
     position: absolute;
-    bottom: 530px;
-    left: 0;
-    width: 100%;
+    top: -50px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 150%;
     z-index: 1;
 }
 
-/* .PlayerFourBox {
-    position: absolute;
-    bottom: 220px;
-    left: 290px;
-    width: 100%;
-    pointer-events: none;
-    z-index: 1;
-} */
-
 .CardsDeck {
     position: absolute;
-    bottom: 270px;
-    left: 790px;
-    width: 10%;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    width: auto;
     z-index: 1;
 }
 
 .UsedPile {
     position: absolute;
-    bottom: 270px;
-    left: 620px;
-    width: 10%;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    z-index: 1;
+
+}
+
+.FirstLookButton {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    transform: translate(-50%, -50%);
     z-index: 1;
 
 }
