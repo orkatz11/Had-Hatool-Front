@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
-import {Card, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
+import {Card, CardValue, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
 import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
 function GameTable({ children }: { children?: React.ReactNode }) {
@@ -198,17 +198,32 @@ interface HadHatoolCardProps {
 
 
 function HadHatoolCard({ width, height, card, onClick}: Readonly<HadHatoolCardProps>) {  
-    let isShowed = false
-    if (card.value != UNKNOWN_VALUE) {isShowed = true}
+    let isShowed = false;
+    let cardStringValue = ''; 
+    if (card.value != UNKNOWN_VALUE) {  // if the card has a value - get the string
+        isShowed = true;
+        if ([CardValue.DRAW2, CardValue.PEAK, CardValue.SWAP].includes(card.value)) {
+            cardStringValue = CardValue[card.value];
+        }else {
+            cardStringValue = String(card.value);
+        }
+        
+    }
     return (
         <CardMUI sx={{
             width: width,
             height: height
         }}>
             <CardActionArea onClick={onClick}>
-                <CardContent>
-                    <Typography variant="h4" component="div" textAlign={"center"}>
-                        {isShowed ? card.value : null} 
+                <CardContent
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center"
+                   }}
+                >
+                    <Typography 
+                        variant="h5"    component="div" textAlign={"center"} >
+                        {isShowed ? cardStringValue : null} 
                     </Typography>
                 </CardContent>
             </CardActionArea>
