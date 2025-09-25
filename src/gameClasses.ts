@@ -18,7 +18,7 @@ Ten
 // Add special card Values in the future
 }
 
-export const user_id = 1;
+export const user_id = 111;
 export const UNKNOWN_VALUE = 300;
 export type UnknownValue = typeof UNKNOWN_VALUE;
 
@@ -39,13 +39,11 @@ class HadHatoolCard{
 export function createPlayerHandByLocation(locations?: number[], cards? : HadHatoolCard[]) :HadHatoolCard[] {  // returnes empty hand if no input
 
     const playerHand: HadHatoolCard[] = Array.from({ length: 4 }, () => new HadHatoolCard());
-
     if (cards != null && locations != null) {
         for (let locationIndex = 0; locationIndex < locations.length+1; locationIndex++) {
 
             playerHand[locations[locationIndex]] =  cards[locationIndex]; 
         }
-    
     }
     
     return(playerHand);

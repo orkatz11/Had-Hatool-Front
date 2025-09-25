@@ -4,7 +4,6 @@ import './gameView.css';
 import {Card, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
 import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
 
-
 function GameTable({ children }: { children?: React.ReactNode }) {
     return (
         <Box
@@ -29,6 +28,7 @@ function GameTable({ children }: { children?: React.ReactNode }) {
 }
 
 function GameView() {
+    const [gameID, setGameID] = useState(0)
     const [allPlayersCards, setAllPlayersCards] = useState(new Map<number,Card[]>());
     const [firstLookDisabled, setFirstLookDisabled] = useState(false);
 
@@ -43,6 +43,7 @@ function GameView() {
                 console.log(result);
                 setPlayerIdNumbers(result.playerIdNumbers); 
                 setPileCard(result.pileCard);
+                setGameID(result.gameIdNumber)
             } catch(err) {
                 console.error("createNewGame failed:", err);
             }
@@ -53,33 +54,38 @@ function GameView() {
 
 //use the first solution 
 
-    function handleFirstLookClick(): void {   //SHOULD ALSO RETURN THE NEXT TURN
+    async function handleFirstLookClick(): Promise<void> {   //SHOULD ALSO RETURN THE NEXT TURN
         const firstLookIn: FirstLookIn = new FirstLookIn;
-        const cardsLocation = [0,3];
-        firstLookIn.playerNumber = playerIdNumbers[0];
-        firstLookIn.cardsNeeded = {cardsSource:  firstLookIn.playerNumber, cardsLocation: cardsLocation};
+        const cardsLocation: number[] = [0,3];
+        firstLookIn.playerUserId = user_id;
+        firstLookIn.gameID = gameID;
         const firstLookCall = new FirstLookAction;  //creating an object of the action class
-        const firstLookRes: FirstLookOut = firstLookCall.excecuteAction(firstLookIn); // recieve the 2 cards wanted, in the 0,3 locations
-        const firstLookCards : Card[] = firstLookRes.cardsRecived; //reciving the cards from the back
-        const newallPlayersCards = new Map<number,Card[]>();
-        const playerHand : Card[]= createPlayerHandByLocation(cardsLocation,firstLookCards )
-        newallPlayersCards.set( firstLookIn.playerNumber, playerHand);
-        setAllPlayersCards(newallPlayersCards);
+        try{
+            const firstLookRes: FirstLookOut = await firstLookCall.excecuteAction(firstLookIn); // recieve the 2 cards wanted, in the 0,3 locations
+            const firstLookCards : Card[] = firstLookRes.cardsRecived; //reciving the cards from the back
+            const newallPlayersCards = new Map<number,Card[]>();
+            const playerHand : Card[]= createPlayerHandByLocation(cardsLocation,firstLookCards)
+            newallPlayersCards.set(firstLookIn.playerUserId, playerHand);
+            setAllPlayersCards(newallPlayersCards);
 
-        setTimeout(() => {
-            const emptyHand: Card[]= createPlayerHandByLocation();  // getting a new empty hand after time's up
-            const mainPlayerEmptyHand = new Map<number,Card[]>();
-            mainPlayerEmptyHand.set( firstLookIn.playerNumber, emptyHand);
-            setAllPlayersCards(mainPlayerEmptyHand);
-          }, 5000);
-        setFirstLookDisabled(true);
-        //reset the 'cardsShowed' state
+            setTimeout(() => {
+                const emptyHand: Card[]= createPlayerHandByLocation();  // getting a new empty hand after time's up
+                const mainPlayerEmptyHand = new Map<number,Card[]>();
+                mainPlayerEmptyHand.set( firstLookIn.playerUserId, emptyHand);
+                setAllPlayersCards(mainPlayerEmptyHand);
+            }, 5000);
+            setFirstLookDisabled(true);
+            //reset the 'cardsShowed' state
+        } catch (err) {
+            console.error("firstLook failed:", err);
+        }
+        
     }
 
     function handleStackClick(isDeck: boolean): Card {
         const takeCardInput: TakeCardIn = new TakeCardIn;
         takeCardInput.isDeck = isDeck;
-        takeCardInput.playerNumber = playerIdNumbers[1];
+        takeCardInput.playerUserId = playerIdNumbers[1];
         const takeCardAction: TakeCardAction = new TakeCardAction;
         const cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);  // returns [Card]
         const card: Card = cardOut.cardsRecived[0];
