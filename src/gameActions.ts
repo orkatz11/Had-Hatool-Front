@@ -1,4 +1,4 @@
-import {createNewGameApiCall, ApiResultNewGame} from './apiHandaling';
+import {createNewGameApiCall, ApiResultNewGame, getFirstLookCards, ApiFirstLookCards} from './apiHandling';
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
 import {Card, CardValue } from './gameClasses'
 import {string_to_card_value_enum} from './utils'
@@ -33,7 +33,6 @@ export enum GameActions {
     PickCard = 'pickCard',
 }
 
-
 interface GetCardsExcecuteInput {
     cardsSource: number;  // 5 = deck, 6 = pile   //NEED TO CHANGE TO ENUM
     cardsLocation: number[];
@@ -43,11 +42,13 @@ interface GetCardsExcecuteInput {
 class ExecutActionIn {
 
     cardsNeeded: GetCardsExcecuteInput;  //[which player, which cards] --> 
-    playerNumber: number;
+    playerUserId: number;
+    gameID: number;
 
     constructor() {
         this.cardsNeeded = {cardsSource: 1, cardsLocation: [9]}
-        this.playerNumber = 1;  
+        this.playerUserId = 1;  
+        this.gameID = 0;
     }
 }
 
@@ -58,7 +59,7 @@ class ExecutActionOut {
 
     constructor() {
         this.cardsRecived = [];
-        this.nextTurn = 0;  //thisplayernumber + 1 modulu 2
+        this.nextTurn = 0;  //thisplayerUserId + 1 modulu 2
     }
 }
 
@@ -72,11 +73,11 @@ export class GameAction {
 }
 
 export class FirstLookIn extends ExecutActionIn{
-    playerNumber: number
+    playerUserId: number
 
     constructor() {
         super()
-        this.playerNumber = 0;  // since it is for every player
+        this.playerUserId = 0;  // since it is for every player
     }
 }
 
@@ -84,17 +85,16 @@ export class FirstLookOut extends ExecutActionOut{
     
     constructor() {
         super()
-        this.nextTurn = 1;
+        this.nextTurn = 0;
     }
 }
 
 export class FirstLookAction extends GameAction {
-    excecuteAction(firstLookIn: FirstLookIn): FirstLookOut {
-        const cards: Card[] = getPlayersCards(firstLookIn.playerNumber, [0, 3]); // check that this is an allowed action, and return the cards
+    async excecuteAction(firstLookIn: FirstLookIn): Promise<FirstLookOut> {
+        const apiResult: ApiFirstLookCards = await getFirstLookCards(firstLookIn.playerUserId, firstLookIn.gameID); // check that this is an allowed action, and return the cards
         const res: FirstLookOut = new FirstLookOut();
-        res.cardsRecived = cards;
-        // res.nextTurn = getNextTurn() !!
-
+        res.cardsRecived = apiResult.player_outer_cards.map(stringCard => new Card(string_to_card_value_enum(stringCard)));
+        res.nextTurn = apiResult.next_turn;
         return res;
     }
 }
@@ -104,7 +104,7 @@ export class TakeCardIn extends ExecutActionIn {
 
     constructor() {
         super()
-        this.playerNumber = 1;
+        this.playerUserId = 1;
         this.isDeck = false;
     }
 }
@@ -133,12 +133,12 @@ export class TakeCardAction extends GameAction {
 }
 
 
-// (actionChosen: GameActions, playerNumber: number, ownCard?: number, playerCard?: number):  {
+// (actionChosen: GameActions, playerUserId: number, ownCard?: number, playerCard?: number):  {
 
 
 
-// function availbleAction(actionChosen: GameActions, ownCard?: number, playerNumber?: number, playerCard?: number) {
-//     send request availbleAction(actionChosen: string, ownCard ?: number, playerNumber ?: number, playerCard ?: number)
+// function availbleAction(actionChosen: GameActions, ownCard?: number, playerUserId?: number, playerCard?: number) {
+//     send request availbleAction(actionChosen: string, ownCard ?: number, playerUserId ?: number, playerCard ?: number)
 //     if response.actionChosen == 'action name':
 //         doActionFunc(card, ...)
 // }
