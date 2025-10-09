@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
 import {Card, CardValue, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
-import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
+import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, ClickCardStackAction, ClickCardStackIn, ClickCardStackOut  } from './gameActions';
 
 function GameTable({ children }: { children?: React.ReactNode }) {
     return (
@@ -35,6 +35,7 @@ function GameView() {
     const [deckCard, setDeckCard] = useState(new Card);
     const [playerIdNumbers, setPlayerIdNumbers] = useState([0]); // Should be Map object, in future (will create typing problems with get func)
     const [pileCard, setPileCard] = useState(new Card);  // Will be filled by the starting game useEffect
+
     
     useEffect(() => {
         const helperGetGame = async (): Promise<void> => {
@@ -82,23 +83,35 @@ function GameView() {
         
     }
 
-    function handleStackClick(isDeck: boolean): Card {
-        const takeCardInput: TakeCardIn = new TakeCardIn;
-        takeCardInput.isDeck = isDeck;
-        takeCardInput.playerUserId = playerIdNumbers[1];
-        const takeCardAction: TakeCardAction = new TakeCardAction;
-        const cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);  // returns [Card]
-        const card: Card = cardOut.cardsRecived[0];
-        return(card)
+    async function handleStackClick(isDeck: boolean): Promise<Card> {
+        const clickDeckInput: ClickCardStackIn = new ClickCardStackIn;
+        clickDeckInput.playerUserId = user_id;
+        clickDeckInput.gameID = gameID;
+        clickDeckInput.isDeck = isDeck;
+        const clickDeckAction: ClickCardStackAction = new ClickCardStackAction;
+        try {
+            const cardOut: ClickCardStackOut = await clickDeckAction.excecuteAction(clickDeckInput);  // returns [Card]
+            const cardReturned: Card = cardOut.cardsRecived[0];
+            return (cardReturned)
+
+        } catch (err) {
+            console.error("firstLook failed:", err);
+            throw err;
+        }
     }
 
-    function handleDeckClick(): void {   
-        const cardReturned = handleStackClick(true);
-        setDeckCard(cardReturned);
-    }
-
-    function handlePileClick(): void { /* document why this function 'handlePileClick' is empty */}
     
+    async function handleDeckClick(): Promise<void> {   
+        const cardRecived: Card = await handleStackClick(true);
+        setDeckCard(cardRecived)
+    }
+
+
+    async function handlePileClick(): Promise<void> {   
+        const cardRecived: Card = await handleStackClick(false);
+        setDeckCard(cardRecived)
+
+    }
 
     return (
         <Box>  {/* The 4 cards placements*/}

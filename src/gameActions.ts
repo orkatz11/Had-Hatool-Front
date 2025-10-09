@@ -1,6 +1,6 @@
-import {createNewGameApiCall, ApiResultNewGame, getFirstLookCards, ApiFirstLookCards} from './apiHandling';
+import {createNewGameApiCall, ApiResultNewGame, getFirstLookCards, ApiFirstLookCards, clickDeck,clickPile, APIStackCard} from './apiHandling';
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
-import {Card, CardValue } from './gameClasses'
+import {Card, CardValue, user_id } from './gameClasses'
 import {string_to_card_value_enum} from './utils'
 
 
@@ -53,13 +53,10 @@ class ExecutActionIn {
 }
 
 class ExecutActionOut {
-
     cardsRecived: Card[];
-    nextTurn: number;
 
     constructor() {
         this.cardsRecived = [];
-        this.nextTurn = 0;  //thisplayerUserId + 1 modulu 2
     }
 }
 
@@ -82,7 +79,8 @@ export class FirstLookIn extends ExecutActionIn{
 }
 
 export class FirstLookOut extends ExecutActionOut{
-    
+    nextTurn: number;
+
     constructor() {
         super()
         this.nextTurn = 0;
@@ -99,9 +97,8 @@ export class FirstLookAction extends GameAction {
     }
 }
 
-export class TakeCardIn extends ExecutActionIn {
+export class ClickCardStackIn extends ExecutActionIn {
     isDeck: boolean;
-
     constructor() {
         super()
         this.playerUserId = 1;
@@ -109,24 +106,24 @@ export class TakeCardIn extends ExecutActionIn {
     }
 }
 
-export class TakeCardOut extends ExecutActionOut {
-
+export class ClickCardStackOut extends ExecutActionOut {
     constructor() {
         super()
-        this.nextTurn = 1;
     }
-
-
 }
 
-export class TakeCardAction extends GameAction {
-    excecuteAction(takeCardIn: TakeCardIn): TakeCardOut {
-        const card: Card = getPileOrDeckCard(takeCardIn.isDeck); // check that this is an allowed action, and return the card
-        const res: TakeCardOut = new TakeCardOut();
-        res.cardsRecived = [card];
-        //res.cardsRecived[0] =  card;   --> FIX
-        // res.nextTurn = getNextTurn() !!
+export class ClickCardStackAction extends GameAction {
+    async excecuteAction(clickDeckIn: ClickCardStackIn): Promise<ClickCardStackOut> {
+        let apiResult: APIStackCard;
+        if (clickDeckIn.isDeck) {
+            apiResult = await clickDeck(clickDeckIn.playerUserId, clickDeckIn.gameID);
+        } else {
+            apiResult = await clickPile(clickDeckIn.playerUserId, clickDeckIn.gameID);
+        }
 
+        const card: Card  = new Card(string_to_card_value_enum(apiResult.chosen_card))
+        const res: ClickCardStackOut = new ClickCardStackOut();
+        res.cardsRecived = [card];
         return res;
 
     }
