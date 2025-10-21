@@ -63,6 +63,7 @@ function GameView() {
         const firstLookCall = new FirstLookAction;  //creating an object of the action class
         try{
             const firstLookRes: FirstLookOut = await firstLookCall.excecuteAction(firstLookIn); // recieve the 2 cards wanted, in the 0,3 locations
+            console.log(firstLookRes);
             const firstLookCards : Card[] = firstLookRes.cardsRecived; //reciving the cards from the back
             const newallPlayersCards = new Map<number,Card[]>();
             const playerHand : Card[]= createPlayerHandByLocation(cardsLocation,firstLookCards)
@@ -84,33 +85,43 @@ function GameView() {
     }
 
     async function handleStackClick(isDeck: boolean): Promise<Card> {
-        const clickDeckInput: ClickCardStackIn = new ClickCardStackIn;
-        clickDeckInput.playerUserId = user_id;
-        clickDeckInput.gameID = gameID;
-        clickDeckInput.isDeck = isDeck;
-        const clickDeckAction: ClickCardStackAction = new ClickCardStackAction;
+        const clickStackInput: ClickCardStackIn = new ClickCardStackIn;
+        clickStackInput.playerUserId = user_id;
+        clickStackInput.gameID = gameID;
+        clickStackInput.isDeck = isDeck;
+        const clickStackAction: ClickCardStackAction = new ClickCardStackAction;
         try {
-            const cardOut: ClickCardStackOut = await clickDeckAction.excecuteAction(clickDeckInput);  // returns [Card]
+            const cardOut: ClickCardStackOut = await clickStackAction.excecuteAction(clickStackInput);  // returns [Card]
             const cardReturned: Card = cardOut.cardsRecived[0];
             return (cardReturned)
 
         } catch (err) {
-            console.error("firstLook failed:", err);
+            console.error("stack click failed:", err);
             throw err;
         }
     }
 
     
-    async function handleDeckClick(): Promise<void> {   
-        const cardRecived: Card = await handleStackClick(true);
-        setDeckCard(cardRecived)
+    async function handleDeckClick(): Promise<void> {
+        try{
+            const cardRecived: Card = await handleStackClick(true);
+            setDeckCard(cardRecived)
+        } catch (err) {
+            console.error("Deck click failed:", err);
+            throw err;
+        }
+        
     }
 
 
-    async function handlePileClick(): Promise<void> {   
-        const cardRecived: Card = await handleStackClick(false);
-        setDeckCard(cardRecived)
-
+    async function handlePileClick(): Promise<void> {
+        try{
+            const cardRecived: Card = await handleStackClick(false);
+            setPileCard(cardRecived)    
+        } catch (err){
+            console.error("Pile click failed:", err);
+            throw err;
+        }
     }
 
     return (
