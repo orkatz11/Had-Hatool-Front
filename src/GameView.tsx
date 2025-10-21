@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
 import {Card, CardValue, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
-import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, TakeCardAction, TakeCardIn, TakeCardOut  } from './gameActions';
+import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, ClickCardStackAction, ClickCardStackIn, ClickCardStackOut  } from './gameActions';
 
 function GameTable({ children }: { children?: React.ReactNode }) {
     return (
@@ -35,6 +35,7 @@ function GameView() {
     const [deckCard, setDeckCard] = useState(new Card);
     const [playerIdNumbers, setPlayerIdNumbers] = useState([0]); // Should be Map object, in future (will create typing problems with get func)
     const [pileCard, setPileCard] = useState(new Card);  // Will be filled by the starting game useEffect
+
     
     useEffect(() => {
         const helperGetGame = async (): Promise<void> => {
@@ -62,6 +63,7 @@ function GameView() {
         const firstLookCall = new FirstLookAction;  //creating an object of the action class
         try{
             const firstLookRes: FirstLookOut = await firstLookCall.excecuteAction(firstLookIn); // recieve the 2 cards wanted, in the 0,3 locations
+            console.log(firstLookRes);
             const firstLookCards : Card[] = firstLookRes.cardsRecived; //reciving the cards from the back
             const newallPlayersCards = new Map<number,Card[]>();
             const playerHand : Card[]= createPlayerHandByLocation(cardsLocation,firstLookCards)
@@ -82,23 +84,45 @@ function GameView() {
         
     }
 
-    function handleStackClick(isDeck: boolean): Card {
-        const takeCardInput: TakeCardIn = new TakeCardIn;
-        takeCardInput.isDeck = isDeck;
-        takeCardInput.playerUserId = playerIdNumbers[1];
-        const takeCardAction: TakeCardAction = new TakeCardAction;
-        const cardOut: TakeCardOut = takeCardAction.excecuteAction(takeCardInput);  // returns [Card]
-        const card: Card = cardOut.cardsRecived[0];
-        return(card)
+    async function handleStackClick(isDeck: boolean): Promise<Card> {
+        const clickStackInput: ClickCardStackIn = new ClickCardStackIn;
+        clickStackInput.playerUserId = user_id;
+        clickStackInput.gameID = gameID;
+        clickStackInput.isDeck = isDeck;
+        const clickStackAction: ClickCardStackAction = new ClickCardStackAction;
+        try {
+            const cardOut: ClickCardStackOut = await clickStackAction.excecuteAction(clickStackInput);  // returns [Card]
+            const cardReturned: Card = cardOut.cardsRecived[0];
+            return (cardReturned)
+
+        } catch (err) {
+            console.error("stack click failed:", err);
+            throw err;
+        }
     }
 
-    function handleDeckClick(): void {   
-        const cardReturned = handleStackClick(true);
-        setDeckCard(cardReturned);
-    }
-
-    function handlePileClick(): void { /* document why this function 'handlePileClick' is empty */}
     
+    async function handleDeckClick(): Promise<void> {
+        try{
+            const cardRecived: Card = await handleStackClick(true);
+            setDeckCard(cardRecived)
+        } catch (err) {
+            console.error("Deck click failed:", err);
+            throw err;
+        }
+        
+    }
+
+
+    async function handlePileClick(): Promise<void> {
+        try{
+            const cardRecived: Card = await handleStackClick(false);
+            setPileCard(cardRecived)    
+        } catch (err){
+            console.error("Pile click failed:", err);
+            throw err;
+        }
+    }
 
     return (
         <Box>  {/* The 4 cards placements*/}
