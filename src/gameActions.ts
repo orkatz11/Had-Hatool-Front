@@ -1,4 +1,4 @@
-import {createNewGameApiCall, ApiResultNewGame, getFirstLookCards, ApiFirstLookCards, clickDeck,clickPile, APIStackCard} from './apiHandling';
+import {createNewGameApiCall, ApiResultNewGame, getFirstLookCards, ApiFirstLookCards, clickDeck,clickPile, APIClickCard, clickSelfCard} from './apiHandling';
 import { getPlayersCards, getPileOrDeckCard } from './backendMockup';
 import {Card, CardValue, user_id } from './gameClasses'
 import {string_to_card_value_enum} from './utils'
@@ -33,30 +33,25 @@ export enum GameActions {
     PickCard = 'pickCard',
 }
 
-interface GetCardsExcecuteInput {
-    cardsSource: number;  // 5 = deck, 6 = pile   //NEED TO CHANGE TO ENUM
-    cardsLocation: number[];
-
-}
 
 class ExecutActionIn {
 
-    cardsNeeded: GetCardsExcecuteInput;  //[which player, which cards] --> 
     playerUserId: number;
     gameID: number;
 
     constructor() {
-        this.cardsNeeded = {cardsSource: 1, cardsLocation: [9]}
         this.playerUserId = 1;  
         this.gameID = 0;
     }
 }
 
-class ExecutActionOut {
+export class ExecutActionOut {
     cardsRecived: Card[];
+    action_description: string;
 
     constructor() {
         this.cardsRecived = [];
+        this.action_description = '';
     }
 }
 
@@ -114,7 +109,7 @@ export class ClickCardStackOut extends ExecutActionOut {
 
 export class ClickCardStackAction extends GameAction {
     async excecuteAction(clickDeckIn: ClickCardStackIn): Promise<ClickCardStackOut> {
-        let apiResult: APIStackCard;
+        let apiResult: APIClickCard;
         if (clickDeckIn.isDeck) {
             apiResult = await clickDeck(clickDeckIn.playerUserId, clickDeckIn.gameID);
         } else {
@@ -124,6 +119,31 @@ export class ClickCardStackAction extends GameAction {
         const card: Card  = new Card(string_to_card_value_enum(apiResult.chosen_card))
         const res: ClickCardStackOut = new ClickCardStackOut();
         res.cardsRecived = [card];
+        res.action_description = apiResult.action_description;
+        return res;
+
+    }
+}
+
+export class ClickSelfCardIn extends ExecutActionIn {
+        cardPosition: number;
+        constructor() {
+            super()
+            this.cardPosition = 4;
+
+    }
+}
+
+
+export class ClickSelfCardAction extends GameAction {  // A bit too similar to the stack click action
+    async excecuteAction(clickSelfCardIn: ClickSelfCardIn): Promise<ExecutActionOut> {
+        let apiResult: APIClickCard;
+            apiResult = await clickSelfCard(clickSelfCardIn.playerUserId, clickSelfCardIn.gameID, clickSelfCardIn.cardPosition);
+
+        const newPileCard: Card  = new Card(string_to_card_value_enum(apiResult.chosen_card))
+        const res: ExecutActionOut = new ExecutActionOut();
+        res.cardsRecived = [newPileCard];
+        res.action_description = apiResult.action_description;
         return res;
 
     }

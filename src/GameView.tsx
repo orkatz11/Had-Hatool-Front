@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button, Grid2, Box, Card as CardMUI, CardContent, GridDirection, CardActionArea} from '@mui/material';
 import './gameView.css';
 import {Card, CardValue, createPlayerHandByLocation, UNKNOWN_VALUE, user_id} from './gameClasses'
-import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, ClickCardStackAction, ClickCardStackIn, ClickCardStackOut  } from './gameActions';
+import { createNewGame, CreateNewGameOut, FirstLookAction, FirstLookIn, FirstLookOut, ExecutActionOut,ClickCardStackAction, ClickCardStackIn, ClickCardStackOut, ClickSelfCardAction, ClickSelfCardIn} from './gameActions';
 
 function GameTable({ children }: { children?: React.ReactNode }) {
     return (
@@ -93,6 +93,7 @@ function GameView() {
         try {
             const cardOut: ClickCardStackOut = await clickStackAction.excecuteAction(clickStackInput);  // returns [Card]
             const cardReturned: Card = cardOut.cardsRecived[0];
+            console.log(cardOut.action_description)
             return (cardReturned)
 
         } catch (err) {
@@ -124,15 +125,42 @@ function GameView() {
         }
     }
 
+
+
+    async function handleSelfCardClick(position: number):Promise<void> {
+        const clickSelfCardInput: ClickSelfCardIn = new ClickSelfCardIn;
+        clickSelfCardInput.playerUserId = user_id;
+        clickSelfCardInput.gameID = gameID;
+        clickSelfCardInput.cardPosition = position;
+        const clickPlayerHandAction: ClickSelfCardAction = new ClickSelfCardAction;
+        try {
+            const SelfcardOut: ExecutActionOut = await clickPlayerHandAction.excecuteAction(clickSelfCardInput);  // returns [Card]
+            const newPileCard: Card = SelfcardOut.cardsRecived[0];
+            console.log(SelfcardOut.action_description)
+            setPileCard(newPileCard)
+            setDeckCard(new Card())
+
+        } catch (err) {
+            console.error("player's hand click failed:", err);
+            throw err;
+        }
+
+    }
+
+        async function handleOpponentCardClick(position: number):Promise<void> {
+  
+
+    }
+
     return (
         <Box>  {/* The 4 cards placements*/}
             <GameTable>
                 <Box className="MainPlayerBox">
-                    <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cards={allPlayersCards.get(playerIdNumbers[0]) ?? createPlayerHandByLocation()}  // get the Cards array form the playerCards map, if it is undefigned - return an empty Card array.
+                    <PlayerHand width={100} height={140} spacing={1} columns={12} direction='row' cards={allPlayersCards.get(playerIdNumbers[0]) ?? createPlayerHandByLocation()} onClick={handleSelfCardClick} // get the Cards array form the playerCards map, if it is undefigned - return an empty Card array.
                     />
                 </Box>
                 <Box className="TopPlayerBox">
-                    <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cards={allPlayersCards.get(playerIdNumbers[1]) ?? createPlayerHandByLocation()}
+                    <PlayerHand width={50} height={70} spacing={1} columns={24} direction='row' cards={allPlayersCards.get(playerIdNumbers[1]) ?? createPlayerHandByLocation()} onClick={handleOpponentCardClick}
                     />
                 </Box>
                 <Box className="CardsDeck">
@@ -161,12 +189,13 @@ interface PlayerHandProps {
     columns: number;
     direction: GridDirection;
     cards: Card[]
+    onClick: (index:number) => void;
+
 }
 
 
-function PlayerHand({ width, height, spacing, columns, direction, cards}: Readonly<PlayerHandProps>) {
-    
-    function TempOnClick(){ /* for check */ };
+function PlayerHand({ width, height, spacing, columns, direction, cards, onClick}: Readonly<PlayerHandProps>) {
+
 
     return (
 
@@ -185,7 +214,7 @@ function PlayerHand({ width, height, spacing, columns, direction, cards}: Readon
                         width={width}
                         height={height}
                         card={cards[idx]} 
-                        onClick={TempOnClick}
+                        onClick={() => onClick(idx)}
                         />
                 </Grid2>
             ))}
