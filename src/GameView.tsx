@@ -118,7 +118,8 @@ function GameView() {
     async function handlePileClick(): Promise<void> {
         try{
             const cardRecived: Card = await handleStackClick(false);
-            setPileCard(cardRecived)    
+            setPileCard(cardRecived)
+            setDeckCard(new Card())
         } catch (err){
             console.error("Pile click failed:", err);
             throw err;
