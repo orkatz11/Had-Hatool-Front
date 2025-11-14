@@ -135,11 +135,32 @@ function GameView() {
         clickSelfCardInput.cardPosition = position;
         const clickPlayerHandAction: ClickSelfCardAction = new ClickSelfCardAction;
         try {
-            const SelfcardOut: ExecutActionOut = await clickPlayerHandAction.excecuteAction(clickSelfCardInput);  // returns [Card]
-            const newPileCard: Card = SelfcardOut.cardsRecived[0];
-            console.log(SelfcardOut.action_description)
-            setPileCard(newPileCard)
-            setDeckCard(new Card())
+            const selfcardOut: ExecutActionOut = await clickPlayerHandAction.excecuteAction(clickSelfCardInput);  // returns [Card]
+            const actionString = selfcardOut.action_description.split(" ");
+                if (actionString[0] == 'switch'){
+                const newPileCard: Card = selfcardOut.cardsRecived[0];
+                console.log(selfcardOut.action_description)
+                setPileCard(newPileCard)
+                setDeckCard(new Card())
+                }
+
+                else if (actionString[0] == 'peak'){
+                const peakedCard: Card = selfcardOut.cardsRecived[0]
+                const peakedPlayerHand : Card[]= createPlayerHandByLocation([position],[peakedCard]);
+                const newPlayersCards = new Map<number,Card[]>();
+                newPlayersCards.set(clickSelfCardInput.playerUserId, peakedPlayerHand);
+                setAllPlayersCards(newPlayersCards);
+
+                setTimeout(() => {
+                    const emptyHand: Card[]= createPlayerHandByLocation();  // getting a new empty hand after time's up
+                    const mainPlayerEmptyHand = new Map<number,Card[]>();
+                    mainPlayerEmptyHand.set( clickSelfCardInput.playerUserId, emptyHand);
+                    setAllPlayersCards(mainPlayerEmptyHand);
+                    setDeckCard(new Card())
+
+                }, 5000);
+                
+                }
 
         } catch (err) {
             console.error("player's hand click failed:", err);
