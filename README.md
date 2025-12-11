@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+# Had-Hatool (Rat-a-Tat-Cat) - Online Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the Frontend repository of the card game Had-Hatool (also known as Rat-a-Tat-Cat), using Typescript and React. \
+[The Backend](https://github.com/orkatz11/Had-Hatool-Back) repository uses python and FastAPI, and there you can find the REST API spec.
 
-## Available Scripts
+## Running the Game
 
-In the project directory, you can run:
+1. Clone this repo: 
+```bash
+git clone https://github.com/orkatz11/Had-Hatool-Front.git
+cd Had-Hatool-Front
+```
 
-### `npm start`
+2. install dependencies: 
 
-Runs the app in the development mode.\
+```bash 
+npm install
+```
+
+3. Run the app in the development mode: \
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash 
+npm start
+```
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
+4. You can build the app for production to the build folder: \
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm run build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Notes:** 
+* By default the development server opens a browser at http://localhost:3000. If you want to change the port, set the PORT environment variable before running npm start.
+* You must run the backend server first according to the instructions in the backend repository (link above).
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Implementation references
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Frontend framework:** React (recommended React 18.x+).  
+    - Important React features used: functional components, React Hooks (useState, useEffect, useRef, etc.)  
+- **Language:** TypeScript (recommended TypeScript 5.x). The codebase is compiled to ES6-compatible JavaScript for browser execution.  
+- **Important libraries:**  
+    - axios — HTTP client used to call the backend API (promises / async/await usage).  
+    - @mui/material (Material UI) — component library for UI primitives and layout.  
+    - Async/await patterns are used for API calls and side-effect management.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## DevEx — Code quality and linting
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Linting:  **ESLint** (v9+)
+* Plugins used in this project:
 
-## Learn More
+  * `eslint-plugin-sonarjs`
+  * `eslint-plugin-unicorn`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The ESLint configuration files are included in the repository in the following link.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Contributions
+
+Not receiving contributions since this is a personal project.
