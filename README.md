@@ -60,3 +60,22 @@ The ESLint configuration files are included in the repository in the following l
 ## Contributions
 
 Not receiving contributions since this is a personal project.
+
+## Appendix - How to play
+This implementation follows the common Rat-a-Tat-Cat rules. The objective is to finish the game with the lowest total sum value of your face-down cards. \
+Currently the game can be played against a computer opponent. 
+
+
+**Basic flow** \
+Goal: End the game with the lowest total value of cards. \
+Setup: Each player gets 4 face-down cards. You can look at your two outer cards once at the start. \
+
+**Gameplay:**
+1. On your turn, draw the top card from the draw or discard pile.
+2. You can swap it with one of your face-down cards or discard it.
+3. If you draw a power card (Peek, Swap, or Draw 2), follow its action:
+    * PEEK - allows a player to look at one of their face-down cards.
+    * DRAW2 - causes the player to play 2 more turns of the game 
+    * SWAP - allows the player to swap one of their cards with another player’s card.
+4. Ending the Game: A player can end the game by saying “Rat-a-Tat Cat” after finishing his turn. Everyone else gets one final turn.
+5. Scoring: Players reveal their cards and total the values. The lowest score wins the game!
